@@ -15,8 +15,8 @@ export default function Document() {
 
         {/* PWA Manifest & Theme */}
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#1F2937" />
-        <meta name="msapplication-TileColor" content="#10B981" />
+        <meta name="theme-color" content="#1e9df1" />
+        <meta name="msapplication-TileColor" content="#1e9df1" />
 
         {/* Favicons */}
         <link
