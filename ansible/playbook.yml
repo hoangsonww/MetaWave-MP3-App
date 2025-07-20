@@ -1,0 +1,13 @@
+---
+- name: MetaWave Full Deploy
+  hosts: local
+  gather_facts: false
+  vars_prompt:
+    - name: "app_image_tag"
+      prompt: "Docker image tag to deploy"
+      private: no
+      default: "{{ app_image_tag }}"
+
+  roles:
+    - terraform
+    - ecs_deploy

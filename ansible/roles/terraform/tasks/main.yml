@@ -1,0 +1,25 @@
+---
+- name: Ensure Terraform is initialized
+  community.general.terraform:
+    project_path: "{{ terraform_dir }}"
+    executable: terraform
+    state: init
+
+- name: Terraform plan
+  community.general.terraform:
+    project_path: "{{ terraform_dir }}"
+    executable: terraform
+    state: planned
+    plan_file: tfplan
+    vars:
+      supabase_url: "{{ lookup('env','SUPABASE_URL') }}"
+      supabase_anon_key: "{{ lookup('env','SUPABASE_ANON_KEY') }}"
+      db_password: "{{ lookup('env','DB_PASSWORD') }}"
+      app_image_tag: "{{ app_image_tag }}"
+
+- name: Terraform apply
+  community.general.terraform:
+    project_path: "{{ terraform_dir }}"
+    executable: terraform
+    state: applied
+    plan_file: tfplan

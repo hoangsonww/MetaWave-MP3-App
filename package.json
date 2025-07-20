@@ -1,0 +1,18 @@
+{
+  "name": "metawave-app",
+  "version": "1.0.0",
+  "description": "Metawave is a web application that provides a platform for users to create, manage, and share their audio waveforms. It is designed to be user-friendly and efficient, allowing users to visualize and manipulate audio data with ease.",
+  "main": "dist/index.js",
+  "scripts": {
+    "lint": "npm run check && npm run format",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,scss,md,html}\"",
+    "check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,scss,md,html}\""
+  },
+  "dependencies": {
+    "prettier": "^3.6.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.3"
+  },
+  "private": false
+}

@@ -1,0 +1,17 @@
+---
+# AWS region & environment
+aws_region: us-east-1
+environment: dev
+
+# Path to your Terraform directory
+terraform_dir: ../aws
+
+# ECR repo name (must match Terraform)
+ecr_repo_name: "{{ environment }}-metawave-repo"
+
+# ECS service/cluster names (from Terraform outputs)
+ecs_cluster_name: "metawave-{{ environment }}-cluster"
+ecs_service_name: "metawave-{{ environment }}-service"
+
+# Docker image tag (override via --extra-vars)
+app_image_tag: latest

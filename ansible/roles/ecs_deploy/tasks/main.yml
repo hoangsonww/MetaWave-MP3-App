@@ -1,0 +1,59 @@
+---
+- name: Build and push Docker image
+  block:
+    - name: Retrieve AWS account ID
+      aws_sts:
+        region: "{{ aws_region }}"
+        profile: "{{ lookup('env','AWS_PROFILE') | default(omit) }}"
+      register: sts
+
+    - set_fact:
+        account_id: "{{ sts.sts_creds.account }}"
+
+    - name: Ensure ECR repo exists
+      amazon.aws.ecr:
+        aws_access_key: "{{ lookup('env','AWS_ACCESS_KEY_ID') | default(omit) }}"
+        aws_secret_key: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') | default(omit) }}"
+        region: "{{ aws_region }}"
+        name: "{{ ecr_repo_name }}"
+        state: present
+
+    - name: Login to ECR
+      community.docker.docker_login:
+        registry_url: "{{ account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com"
+        reauthorize: yes
+
+    - name: Build Docker image
+      community.docker.docker_image:
+        build:
+          path: "../"    # assume your Dockerfile at repo root
+        name: "{{ account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com/{{ ecr_repo_name }}"
+        tag: "{{ app_image_tag }}"
+
+    - name: Push Docker image
+      community.docker.docker_image:
+        name: "{{ account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com/{{ ecr_repo_name }}"
+        tag: "{{ app_image_tag }}"
+        push: yes
+
+- name: Update ECS service to new image
+  amazon.aws.ecs_service:
+    cluster: "{{ ecs_cluster_name }}"
+    service: "{{ ecs_service_name }}"
+    desired_count: 2
+    task_definition:
+      family: "metawave-task-{{ environment }}"
+      container_definitions:
+        - name: app
+          image: "{{ account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com/{{ ecr_repo_name }}:{{ app_image_tag }}"
+          essential: true
+          portMappings:
+            - containerPort: 3000
+              hostPort: 3000
+          environment:
+            - name: SUPABASE_URL
+              value: "{{ lookup('env','SUPABASE_URL') }}"
+            - name: SUPABASE_ANON_KEY
+              value: "{{ lookup('env','SUPABASE_ANON_KEY') }}"
+    region: "{{ aws_region }}"
+    force_new_deployment: true

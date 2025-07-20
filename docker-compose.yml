@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    image: metawave-web:latest
+    ports:
+      - "3000:3000"
+    environment:
+      # MAKE SURE THESE ARE SET IN YOUR ENVIRONMENT!!!
+      NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: ./web
+        target: /app
+      # cache node_modules for faster rebuilds
+      - web_node_modules:/app/node_modules
+
+volumes:
+  web_node_modules:
