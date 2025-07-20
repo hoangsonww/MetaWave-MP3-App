@@ -65,7 +65,7 @@ export function TrackCard({
   const [saving, setSaving] = useState(false);
   const [duration, setDuration] = useState<string>("–");
 
-  // --- TAGS STATE ---
+  //  TAGS STATE
   const [modalTags, setModalTags] = useState<string[]>(track.tags ?? []);
   const [newTag, setNewTag] = useState("");
 
@@ -291,7 +291,7 @@ export function TrackCard({
                     )}
                   </div>
 
-                  {/* --- Tags Editor --- */}
+                  {/*  Tags Editor  */}
                   <div>
                     <Label>Tags</Label>
                     <div className="flex flex-wrap gap-1 mb-2 mt-2">
@@ -374,7 +374,7 @@ export function TrackCard({
           <AudioPlayerWave src={track.file_url} small />
         </div>
 
-        {/* --- Display Tags as Pills Below Waveform --- */}
+        {/*  Display Tags as Pills Below Waveform  */}
         {track.tags && track.tags.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1">
             {track.tags.map((tag) => (

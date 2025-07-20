@@ -82,7 +82,6 @@ export default function AlbumsList() {
     );
   }
 
-  // If we know user is not logged in, don't render anything (redirect already happening)
   if (session === null) {
     return null;
   }

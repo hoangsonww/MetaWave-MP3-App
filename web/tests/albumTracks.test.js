@@ -1,6 +1,3 @@
-// tests/albumTracks.test.js
-
-// 1) Mock the Supabase client module before importing anything else
 jest.mock("../supabase/client", () => ({
   supabase: { from: jest.fn() },
 }));
@@ -12,7 +9,7 @@ const {
   removeTrackFromAlbum,
   updateTrackPosition,
   batchUpdatePositions,
-} = require("../supabase/queries/albums"); // adjust path if needed
+} = require("../supabase/queries/albums");
 
 describe("album_tracks queries", () => {
   let builder;

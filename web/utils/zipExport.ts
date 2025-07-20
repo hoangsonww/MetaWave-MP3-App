@@ -1,4 +1,3 @@
-// path: utils/zipExport.ts
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 

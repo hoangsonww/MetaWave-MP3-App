@@ -57,7 +57,6 @@ export default function ProfileSettingsPage() {
     },
   });
 
-  // redirect once we know there's no session
   useEffect(() => {
     if (!loading && session === null) {
       router.replace("/login");

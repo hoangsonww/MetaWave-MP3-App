@@ -15,7 +15,7 @@ const ProfileSchema = z.object({
 export type Profile = z.infer<typeof ProfileSchema>;
 
 const CreateProfileSchema = z.object({
-  id: z.string(), // supply the new user’s id
+  id: z.string(),
   email: z.string().email(),
   name: z.string(),
   dob: z.string().nullable().optional(),

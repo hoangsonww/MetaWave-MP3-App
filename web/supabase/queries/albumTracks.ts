@@ -67,7 +67,6 @@ export async function batchUpdatePositions(
   album_id: string,
   positions: Array<{ track_id: string; position: number }>,
 ): Promise<AlbumTrack[]> {
-  // Supabase doesn't support bulk upsert for pivot tables; do one-by-one
   const results: AlbumTrack[] = [];
   for (const { track_id, position } of positions) {
     const updated = await updateTrackPosition(album_id, track_id, position);

@@ -1,4 +1,3 @@
-// hooks/useSessionProfile.ts
 import { useEffect, useState } from "react";
 import { supabase } from "@/supabase/client";
 import { getProfileById, Profile } from "@/supabase/queries";
@@ -19,7 +18,7 @@ export function useSessionProfile() {
       }
 
       try {
-        const p = await getProfileById(user.id); // <-- use correct helper
+        const p = await getProfileById(user.id);
         if (mounted) setProfile(p);
       } catch {
         /* swallow */

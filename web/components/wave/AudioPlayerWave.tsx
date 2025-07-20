@@ -15,7 +15,7 @@ export default function AudioPlayerWave({
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const ws = useRef<WaveSurfer | null>(null);
-  const { resolvedTheme } = useTheme(); // to trigger re-creation on theme change
+  const { resolvedTheme } = useTheme();
   const [ready, setReady] = useState(false);
   const [playing, setPlaying] = useState(false);
 

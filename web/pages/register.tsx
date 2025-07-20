@@ -46,7 +46,6 @@ export default function RegisterPage() {
     }
   };
 
-  // Shared input style
   const inputStyles =
     "shadow-sm bg-input text-input-foreground placeholder:text-muted-foreground focus:shadow-md focus:ring-2 focus:ring-primary focus:outline-none transition";
 

@@ -71,7 +71,7 @@ export default function UploadPage() {
 
     try {
       await createTrack({
-        owner_id, // <-- correct field
+        owner_id,
         title: title || file.name.replace(/\.mp3$/i, ""),
         artist: artist || null,
         album_id: null,

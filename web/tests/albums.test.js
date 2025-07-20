@@ -1,4 +1,3 @@
-// Mock the entire supabase/client module *before* requiring albums
 jest.mock("../supabase/client", () => {
   // we'll override .from in each test's beforeEach
   return {

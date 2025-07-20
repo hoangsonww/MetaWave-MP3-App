@@ -1,6 +1,3 @@
-// tests/tracks.test.js
-
-// 1) Mock the Supabase client
 jest.mock("../supabase/client", () => ({
   supabase: { from: jest.fn() },
 }));

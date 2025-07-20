@@ -1,5 +1,3 @@
-// pages/index.tsx (Landing Page)
-// "use client" if you are on Next.js App Router – add it if needed.
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -45,7 +43,6 @@ import {
 } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 
-/* ------------------ Rotating / Typing Words ------------------ */
 const typingWords = [
   "Upload",
   "Curate",
@@ -56,7 +53,6 @@ const typingWords = [
   "Share",
 ];
 
-/* ------------------ Counters Intersection Hook ------------------ */
 function useCountUp(target: number, duration = 1600) {
   const [val, setVal] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
@@ -85,7 +81,6 @@ function useCountUp(target: number, duration = 1600) {
   return { ref, val };
 }
 
-/* ------------------ Data ------------------ */
 const featureBlocks = [
   {
     icon: <Upload className="h-6 w-6" />,
@@ -225,7 +220,6 @@ const roadmap = [
   { when: "Q4 ’25", what: "AI stem preview & auto‑trims" },
 ];
 
-/* ------------------ Placeholder Wave Icon ------------------ */
 function WaveIcon() {
   return (
     <div className="h-6 w-6 flex items-center justify-center">
@@ -246,9 +240,7 @@ function WaveIcon() {
   );
 }
 
-/* ------------------ Landing Component ------------------ */
 export default function Landing() {
-  /* Typing effect for rotating verbs */
   const [wordIndex, setWordIndex] = useState(0);
   const [displayed, setDisplayed] = useState("");
   const [deleting, setDeleting] = useState(false);
@@ -285,7 +277,6 @@ export default function Landing() {
     e.preventDefault();
     const email = (e.currentTarget as HTMLFormElement).email.value;
     (e.currentTarget as HTMLFormElement).reset();
-    // Replace with your actual logic:
     alert(`Subscribed: ${email}`);
   };
 

@@ -1,4 +1,3 @@
-// pages/login.tsx
 "use client";
 
 import Head from "next/head";
@@ -44,11 +43,6 @@ export default function LoginPage() {
       toast.success("Welcome back!");
       router.push("/dashboard");
     }
-  };
-
-  const socialSignIn = async (provider: "google" | "github") => {
-    const { error } = await supabase.auth.signInWithOAuth({ provider });
-    if (error) toast.error(error.message);
   };
 
   return (

@@ -1,24 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/router";
 import Link from "next/link";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { AlertCircle, Search } from "lucide-react";
 
 export default function NotFoundPage() {
-  const router = useRouter();
-  const [query, setQuery] = useState("");
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (query.trim()) {
-      router.push(`/search?q=${encodeURIComponent(query)}`);
-    }
-  };
-
   return (
     <AppLayout>
       <div className="flex flex-col items-center justify-center flex-1 text-center py-20 px-4">

@@ -1,0 +1,24 @@
+{
+  "name": "MetaWave",
+  "short_name": "MetaWave",
+  "description": "A modern personal music library & sharing hub: upload MP3s, batch‑update artwork, organize drag‑sortable albums & share public profiles.",
+  "lang": "en-US",
+  "start_url": "/?source=pwa",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#111827",
+  "theme_color": "#1F2937",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["music", "productivity", "media"]
+}
