@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { supabase } from "@/supabase/client";
@@ -6,11 +8,17 @@ import { v4 as uuid } from "uuid";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import Head from "next/head";
 import { useRouter } from "next/navigation";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { parseBuffer } from "music-metadata-browser";
+import { Info } from "lucide-react";
 
 export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -60,6 +68,10 @@ export default function UploadPage() {
 
   const run = async () => {
     if (!file) return;
+    if (file.size > 50 * 1024 * 1024) {
+      toast.error("File too large: maximum 50 MB");
+      return;
+    }
     setLoading(true);
 
     // ensure session
@@ -142,11 +154,24 @@ export default function UploadPage() {
         <div className="mx-auto max-w-xl px-6 py-10">
           <h1 className="text-3xl font-bold mb-6">Upload Track</h1>
           <div className="space-y-5 rounded-2xl border border-border bg-card/60 p-6 backdrop-blur">
-            <Input
-              type="file"
-              accept="audio/mpeg"
-              onChange={(e) => setFile(e.target.files?.[0] || null)}
-            />
+            <div className="flex items-center space-x-2">
+              <Input
+                type="file"
+                accept="audio/mpeg"
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
+              />
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-5 w-5 text-muted-foreground hover:text-foreground cursor-pointer" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    <strong>Note:</strong> You cannot upload MP3 files larger
+                    than 50MB.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
             <Input
               placeholder="Title"
               value={title}

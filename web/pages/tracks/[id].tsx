@@ -24,6 +24,11 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
+import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
@@ -53,12 +58,19 @@ import {
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
 import { ID3Writer } from "browser-id3-writer";
+import { DatePicker } from "@/components/DatePicker";
+import { format } from "date-fns";
 
 function formatDuration(sec: number | null | undefined) {
   if (!sec || isNaN(sec)) return "–";
   const m = Math.floor(sec / 60);
   const s = Math.floor(sec % 60);
   return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+function parseDateString(dateStr: string): Date {
+  const [year, month, day] = dateStr.split("-").map(Number);
+  return new Date(year, month - 1, day);
 }
 
 export default function TrackDetailPage() {
@@ -260,7 +272,9 @@ export default function TrackDetailPage() {
     <>
       <Head>
         <title>
-          {track ? `${track.title} — ${track.artist}` : "Loading..."}
+          {track
+            ? `${track.title} by ${track.artist} - MetaWave`
+            : "Loading track information..."}
         </title>
       </Head>
 
@@ -299,7 +313,11 @@ export default function TrackDetailPage() {
               <div className="absolute top-4 right-4 flex gap-2 z-10">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button size="sm" variant="outline">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="cursor-pointer"
+                    >
                       <Share2 className="h-4 w-4" /> Share
                     </Button>
                   </DropdownMenuTrigger>
@@ -319,19 +337,38 @@ export default function TrackDetailPage() {
                   </DropdownMenuContent>
                 </DropdownMenu>
 
-                <Button
-                  size="icon"
-                  variant="outline"
-                  onClick={onDownload}
-                  title="Download MP3"
-                >
-                  <Music2 className="h-4 w-4" />
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={onDownload}
+                      className="cursor-pointer"
+                    >
+                      <Music2 className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Download MP3</p>
+                  </TooltipContent>
+                </Tooltip>
 
                 {isOwner && (
-                  <Button size="icon" variant="outline" onClick={openEdit}>
-                    <Edit2 className="h-4 w-4" />
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        onClick={openEdit}
+                        className="cursor-pointer"
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Edit Track</p>
+                    </TooltipContent>
+                  </Tooltip>
                 )}
               </div>
 
@@ -357,7 +394,9 @@ export default function TrackDetailPage() {
                     </span>
                     <span>
                       {track!.track_date
-                        ? new Date(track!.track_date).toLocaleDateString()
+                        ? parseDateString(
+                            track!.track_date,
+                          ).toLocaleDateString()
                         : "—"}
                     </span>
                   </div>
@@ -448,12 +487,11 @@ export default function TrackDetailPage() {
                     </div>
                     <div>
                       <Label htmlFor="date">Release Date</Label>
-                      <Input
-                        id="date"
-                        type="date"
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
-                        className="mt-2"
+                      <DatePicker
+                        value={date ? parseDateString(date) : undefined}
+                        onChange={(d) => setDate(format(d, "yyyy-MM-dd"))}
+                        placeholder="Pick a release date"
+                        className="mt-2 w-full"
                       />
                     </div>
                     <div>

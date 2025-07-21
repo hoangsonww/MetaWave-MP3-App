@@ -14,6 +14,11 @@ import {
   AtSign,
   GripVertical,
 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 import { AppLayout } from "@/components/layout/AppLayout";
 import {
   getAlbumById,
@@ -93,6 +98,88 @@ function SortableGridItem({
       )}
       <TrackCard track={track} onChanged={onChanged} />
     </div>
+  );
+}
+
+function AddTrackCard({
+  track,
+  toAdd,
+  setToAdd,
+}: {
+  track: Track;
+  toAdd: Set<string>;
+  setToAdd: React.Dispatch<React.SetStateAction<Set<string>>>;
+}) {
+  const [duration, setDuration] = useState("–");
+
+  useEffect(() => {
+    const audio = new Audio(track.file_url);
+    const handler = () => {
+      const sec = audio.duration;
+      if (!isNaN(sec)) {
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60)
+          .toString()
+          .padStart(2, "0");
+        setDuration(`${m}:${s}`);
+      }
+    };
+    audio.addEventListener("loadedmetadata", handler);
+    return () => {
+      audio.removeEventListener("loadedmetadata", handler);
+      audio.pause();
+      audio.src = "";
+    };
+  }, [track.file_url]);
+
+  return (
+    <label className="relative block border border-border rounded-lg overflow-hidden hover:shadow-md transition cursor-pointer">
+      <input
+        type="checkbox"
+        checked={toAdd.has(track.id)}
+        onChange={(e) =>
+          setToAdd((prev) => {
+            const next = new Set(prev);
+            e.target.checked ? next.add(track.id) : next.delete(track.id);
+            return next;
+          })
+        }
+        className="absolute top-2 left-2 z-20 h-5 w-5 accent-primary"
+      />
+
+      <div className="flex h-full flex-col">
+        {/* cover */}
+        <div className="aspect-square w-full bg-gradient-to-br from-primary/30 to-accent/20 flex items-center justify-center">
+          {track.cover_art_url ? (
+            <img
+              src={track.cover_art_url}
+              alt={track.title}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="text-sm text-muted-foreground">No Cover</div>
+          )}
+        </div>
+
+        {/* metadata */}
+        <div className="p-3 flex-1 flex flex-col justify-between">
+          <div>
+            <h4 className="font-semibold truncate">{track.title}</h4>
+            <p className="text-xs text-muted-foreground truncate">
+              {track.artist || "—"}
+            </p>
+          </div>
+          <div className="mt-2 text-xs text-muted-foreground flex justify-between">
+            <span>{duration}</span>
+            <span>
+              {track.track_date
+                ? new Date(track.track_date).toLocaleDateString()
+                : "—"}
+            </span>
+          </div>
+        </div>
+      </div>
+    </label>
   );
 }
 
@@ -273,7 +360,7 @@ export default function AlbumDetailPage() {
           </div>
         ) : (
           <div className="mx-auto max-w-6xl px-6 py-10 space-y-10">
-            {/* ───────────────────────────── Header */}
+            {/*  Header */}
             <div className="relative rounded-2xl overflow-hidden">
               {album.cover_art_url ? (
                 <>
@@ -290,12 +377,16 @@ export default function AlbumDetailPage() {
                 </div>
               )}
 
-              {/* ────────────────────── Controls */}
+              {/*  Controls */}
               <div className="absolute top-4 right-4 flex gap-2 z-10">
                 {/* Share */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button size="sm" variant="outline">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="cursor-pointer"
+                    >
                       <Share2 className="h-4 w-4" /> Share
                     </Button>
                   </DropdownMenuTrigger>
@@ -323,7 +414,7 @@ export default function AlbumDetailPage() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="capitalize"
+                          className="capitalize cursor-pointer"
                         >
                           {album.is_public ? "Public" : "Private"}
                         </Button>
@@ -346,58 +437,80 @@ export default function AlbumDetailPage() {
                       </DropdownMenuContent>
                     </DropdownMenu>
 
-                    <Button size="icon" variant="outline" onClick={openEdit}>
-                      <Edit2 className="h-4 w-4" />
-                    </Button>
-
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button size="icon" variant="outline">
-                          <Plus className="h-4 w-4" />
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          onClick={openEdit}
+                          className="cursor-pointer"
+                        >
+                          <Edit2 className="h-4 w-4" />
                         </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-md">
-                        <DialogHeader>
-                          <DialogTitle>Add Tracks</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-2 max-h-64 overflow-y-auto">
-                          {available.map((t) => (
-                            <div key={t.id} className="flex items-center gap-3">
-                              <Checkbox
-                                checked={toAdd.has(t.id)}
-                                onCheckedChange={(chk) => {
-                                  setToAdd((prev) => {
-                                    const next = new Set(prev);
-                                    chk ? next.add(t.id) : next.delete(t.id);
-                                    return next;
-                                  });
-                                }}
-                              />
-                              <span>{t.title}</span>
-                            </div>
-                          ))}
-                          {available.length === 0 && (
-                            <p className="text-sm text-muted-foreground">
-                              No tracks available
-                            </p>
-                          )}
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Edit Album</p>
+                      </TooltipContent>
+                    </Tooltip>
+
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="inline-block">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                className="cursor-pointer"
+                              >
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                            </DialogTrigger>
+
+                            <DialogContent className="max-w-3xl rounded-2xl p-6 shadow-xl">
+                              <DialogHeader>
+                                <DialogTitle>Add Tracks</DialogTitle>
+                              </DialogHeader>
+
+                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[70vh] overflow-y-auto">
+                                {available.length > 0 ? (
+                                  available.map((t) => (
+                                    <AddTrackCard
+                                      key={t.id}
+                                      track={t}
+                                      toAdd={toAdd}
+                                      setToAdd={setToAdd}
+                                    />
+                                  ))
+                                ) : (
+                                  <p className="col-span-full text-center text-sm text-muted-foreground">
+                                    No tracks available
+                                  </p>
+                                )}
+                              </div>
+
+                              <DialogFooter className="flex justify-end gap-2 mt-4">
+                                <Button
+                                  variant="outline"
+                                  onClick={() => setToAdd(new Set())}
+                                >
+                                  Clear
+                                </Button>
+                                <Button
+                                  onClick={applyAdd}
+                                  disabled={adding || toAdd.size === 0}
+                                >
+                                  {adding ? "Adding..." : "Add"}
+                                </Button>
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
                         </div>
-                        <DialogFooter className="flex justify-end gap-2">
-                          <Button
-                            variant="outline"
-                            onClick={() => setToAdd(new Set())}
-                          >
-                            Clear
-                          </Button>
-                          <Button
-                            onClick={applyAdd}
-                            disabled={adding || toAdd.size === 0}
-                          >
-                            {adding ? "Adding..." : "Add"}
-                          </Button>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Add Tracks</p>
+                      </TooltipContent>
+                    </Tooltip>
                   </>
                 )}
               </div>
@@ -414,7 +527,7 @@ export default function AlbumDetailPage() {
               </div>
             </div>
 
-            {/* ───────────────────────────── Edit dialog */}
+            {/*  Edit dialog */}
             {isOwner && (
               <Dialog open={editOpen} onOpenChange={setEditOpen}>
                 <DialogContent>
@@ -502,7 +615,7 @@ export default function AlbumDetailPage() {
               </Dialog>
             )}
 
-            {/* ───────────────────────────── Tracks grid */}
+            {/*  Tracks grid */}
             <DndContext
               collisionDetection={closestCenter}
               onDragEnd={isOwner ? onDragEnd : () => {}}
