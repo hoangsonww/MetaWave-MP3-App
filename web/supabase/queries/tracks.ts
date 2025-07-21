@@ -54,12 +54,15 @@ export async function getTrackById(id: string): Promise<Track> {
 
 export async function getTracksByAlbum(album_id: string): Promise<Track[]> {
   const { data, error } = await supabase
-    .from("tracks")
-    .select("*")
+    .from("album_tracks")
+    .select("position, track:track_id (*)")
     .eq("album_id", album_id)
-    .order("created_at", { ascending: true });
+    .order("position", { ascending: true });
+
   if (error) throw error;
-  return z.array(TrackSchema).parse(data);
+
+  const tracks = (data as any[]).map((row) => row.track);
+  return z.array(TrackSchema).parse(tracks);
 }
 
 export async function createTrack(input: CreateTrackInput): Promise<Track> {

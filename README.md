@@ -104,6 +104,8 @@ MetaWave is designed to be a **fast, responsive, and intuitive** music library m
 | **Skeleton Loading**   | Consistent skeletons for library grids, user lists, hero areas                                                  |
 | **Validation**         | Zod on all mutations: tracks, profiles, albums; typed supabase operations                                       |
 | **Feedback**           | Sonner toasts for success/failure + optimistic UI hints                                                         |
+| **Waveforms**          | WaveSurfer.js canvas rendering, adaptive colors based on theme toggle, dynamic loading state                    |
+| **Drag & Drop**        | dnd-kit core + sortable for album track reordering, immediate UI feedback on reorder                            |
 | **Drag Grid Adaptive** | Max 4 columns large → scale down responsively; left-aligned on wide canvases                                    |
 | **Access Control**     | Public / private toggles per track & album (future gating)                                                      |
 
@@ -157,6 +159,7 @@ MetaWave's UI is designed to be **fast, responsive, and intuitive**, with a focu
 - **Hero Album Section**: Contrast-preserving overlay with dynamic gradient fallback if no cover.
 - **Card Micro‑Interactions**: Hover borders, shadow elevation, icon actions fade-in (opacity group revealing).
 - **Input Styling**: Soft focus shadows + accessible ring for clarity.
+- **Drag & Drop**: Smooth reordering with dnd-kit, immediate UI feedback on reorder (only available on album detail).
 - **Adaptive Waveforms**: Theme toggle triggers waveform recolor; fallback placeholder while loading.
 - **Grid Strategy**: Strict max of 4 columns large; preserves card width legibility.
 - **Progress-less Upload**: Lean immediate preview with object URL pre-insert for covers & avatars.
@@ -179,10 +182,16 @@ MetaWave aims to provide a polished, cohesive experience that feels both modern 
   <img src="docs/dashboard.png" alt="MetaWave Library View" width="100%" style="border-radius:14px;" />
 </p>
 
-### Track Detail
+### Track Detail (Owner View)
 
 <p align="center">
   <img src="docs/track-detail.png" alt="MetaWave Track Detail" width="100%" style="border-radius:14px;" />
+</p>
+
+### Track Detail (Guest View)
+
+<p align="center">
+  <img src="docs/track-guest.png" alt="MetaWave Track Detail Guest View" width="100%" style="border-radius:14px;" />
 </p>
 
 ### Albums List
@@ -191,10 +200,16 @@ MetaWave aims to provide a polished, cohesive experience that feels both modern 
   <img src="docs/albums.png" alt="MetaWave Albums List" width="100%" style="border-radius:14px;" />
 </p>
 
-### Album Detail
+### Album Detail (Owner View)
 
 <p align="center">
   <img src="docs/album-detail.png" alt="MetaWave Album Detail" width="100%" style="border-radius:14px;" />
+</p>
+
+### Album Detail (Guest View)
+
+<p align="center">
+  <img src="docs/album-guest.png" alt="MetaWave Album Detail Guest View" width="100%" style="border-radius:14px;" />
 </p>
 
 ### Profile Page

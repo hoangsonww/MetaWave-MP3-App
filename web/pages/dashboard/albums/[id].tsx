@@ -2,7 +2,18 @@
 
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Music2, Edit2, Plus, Disc3, Check, Lock } from "lucide-react";
+import {
+  Music2,
+  Edit2,
+  Plus,
+  Disc3,
+  Check,
+  Lock,
+  Share2,
+  Copy,
+  AtSign,
+  GripVertical,
+} from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import {
   getAlbumById,
@@ -14,6 +25,7 @@ import {
   Album,
   Track,
 } from "@/supabase/queries/albums";
+import { getTracksByAlbum } from "@/supabase/queries/tracks";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
 import {
@@ -51,18 +63,34 @@ import Head from "next/head";
 function SortableGridItem({
   track,
   onChanged,
+  draggable,
 }: {
   track: Track & { position?: number };
   onChanged: () => void;
+  draggable: boolean;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: track.id });
+    useSortable({
+      id: track.id,
+      disabled: !draggable,
+    });
+
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
+
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style} className="relative group">
+      {draggable && (
+        <button
+          {...attributes}
+          {...listeners}
+          className="absolute right-2 top-2 z-20 rounded-md p-0.5 bg-card/80 border border-border cursor-grab opacity-0 group-hover:opacity-100 transition active:cursor-grabbing"
+        >
+          <GripVertical className="h-4 w-4 text-muted-foreground" />
+        </button>
+      )}
       <TrackCard track={track} onChanged={onChanged} />
     </div>
   );
@@ -96,13 +124,16 @@ export default function AlbumDetailPage() {
     if (!id) return;
     setAlbum(null);
     setTracks(null);
+
     const a = await getAlbumById(id as string);
     setAlbum(a);
     setEditTitle(a.title);
     setEditDesc(a.description ?? "");
     setEditPublic(a.is_public);
 
-    if (profile) {
+    const owner = session && a.owner_id === session.id;
+
+    if (owner && profile) {
       const raw = await getTracksInAlbum(id as string);
       const all = await getTracksByUser(profile.id);
       const mapped = raw
@@ -114,12 +145,16 @@ export default function AlbumDetailPage() {
       setTracks(mapped);
       setAvailable(all.filter((t) => !mapped.some((m) => m.id === t.id)));
       setToAdd(new Set());
+    } else {
+      const all = await getTracksByAlbum(id as string);
+      const visible = all.filter((t) => t.is_public);
+      setTracks(visible.map((t, i) => ({ ...t, position: i })));
     }
   };
 
   useEffect(() => {
     load();
-  }, [id, profile]);
+  }, [id, profile, session]);
 
   const onDragEnd = async (e: DragEndEvent) => {
     if (!tracks) return;
@@ -187,6 +222,30 @@ export default function AlbumDetailPage() {
     load();
   };
 
+  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+  const onCopy = () => {
+    navigator.clipboard.writeText(shareUrl);
+    toast.success("Link copied!");
+  };
+  const onEmail = () =>
+    window.open(
+      `mailto:?subject=${encodeURIComponent(
+        album?.title ?? "",
+      )}&body=${encodeURIComponent(shareUrl)}`,
+      "_self",
+    );
+  const onNativeShare = () => {
+    // @ts-ignore
+    if (navigator.share)
+      navigator
+        .share({
+          title: album?.title,
+          text: album?.description ?? "",
+          url: shareUrl,
+        })
+        .catch(() => {});
+  };
+
   return (
     <>
       <Head>
@@ -214,6 +273,7 @@ export default function AlbumDetailPage() {
           </div>
         ) : (
           <div className="mx-auto max-w-6xl px-6 py-10 space-y-10">
+            {/* ───────────────────────────── Header */}
             <div className="relative rounded-2xl overflow-hidden">
               {album.cover_art_url ? (
                 <>
@@ -230,90 +290,117 @@ export default function AlbumDetailPage() {
                 </div>
               )}
 
-              {isOwner && (
-                <div className="absolute top-4 right-4 flex gap-2 z-10">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="capitalize"
-                      >
-                        {album.is_public ? "Public" : "Private"}
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        onClick={() => togglePublic(true)}
-                        className="capitalize flex items-center gap-2"
-                      >
-                        {album.is_public && <Check className="h-4 w-4" />}
-                        Public
+              {/* ────────────────────── Controls */}
+              <div className="absolute top-4 right-4 flex gap-2 z-10">
+                {/* Share */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="sm" variant="outline">
+                      <Share2 className="h-4 w-4" /> Share
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={onCopy}>
+                      <Copy className="h-4 w-4 mr-2" /> Copy link
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={onEmail}>
+                      <AtSign className="h-4 w-4 mr-2" /> Email
+                    </DropdownMenuItem>
+                    {/* @ts-ignore */}
+                    {navigator.share && (
+                      <DropdownMenuItem onClick={onNativeShare}>
+                        <Share2 className="h-4 w-4 mr-2" /> Share via...
                       </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => togglePublic(false)}
-                        className="capitalize flex items-center gap-2"
-                      >
-                        {!album.is_public && <Check className="h-4 w-4" />}
-                        Private
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
 
-                  <Button size="icon" variant="outline" onClick={openEdit}>
-                    <Edit2 className="h-4 w-4" />
-                  </Button>
-
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button size="icon" variant="outline">
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-md">
-                      <DialogHeader>
-                        <DialogTitle>Add Tracks</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-2 max-h-64 overflow-y-auto">
-                        {available.map((t) => (
-                          <div key={t.id} className="flex items-center gap-3">
-                            <Checkbox
-                              checked={toAdd.has(t.id)}
-                              onCheckedChange={(chk) => {
-                                setToAdd((prev) => {
-                                  const next = new Set(prev);
-                                  chk ? next.add(t.id) : next.delete(t.id);
-                                  return next;
-                                });
-                              }}
-                            />
-                            <span>{t.title}</span>
-                          </div>
-                        ))}
-                        {available.length === 0 && (
-                          <p className="text-sm text-muted-foreground">
-                            No tracks available
-                          </p>
-                        )}
-                      </div>
-                      <DialogFooter className="flex justify-end gap-2">
+                {/* Owner‑only */}
+                {isOwner && (
+                  <>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
                         <Button
+                          size="sm"
                           variant="outline"
-                          onClick={() => setToAdd(new Set())}
+                          className="capitalize"
                         >
-                          Clear
+                          {album.is_public ? "Public" : "Private"}
                         </Button>
-                        <Button
-                          onClick={applyAdd}
-                          disabled={adding || toAdd.size === 0}
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() => togglePublic(true)}
+                          className="capitalize flex items-center gap-2"
                         >
-                          {adding ? "Adding..." : "Add"}
+                          {album.is_public && <Check className="h-4 w-4" />}
+                          Public
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => togglePublic(false)}
+                          className="capitalize flex items-center gap-2"
+                        >
+                          {!album.is_public && <Check className="h-4 w-4" />}
+                          Private
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    <Button size="icon" variant="outline" onClick={openEdit}>
+                      <Edit2 className="h-4 w-4" />
+                    </Button>
+
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button size="icon" variant="outline">
+                          <Plus className="h-4 w-4" />
                         </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-              )}
+                      </DialogTrigger>
+                      <DialogContent className="max-w-md">
+                        <DialogHeader>
+                          <DialogTitle>Add Tracks</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-2 max-h-64 overflow-y-auto">
+                          {available.map((t) => (
+                            <div key={t.id} className="flex items-center gap-3">
+                              <Checkbox
+                                checked={toAdd.has(t.id)}
+                                onCheckedChange={(chk) => {
+                                  setToAdd((prev) => {
+                                    const next = new Set(prev);
+                                    chk ? next.add(t.id) : next.delete(t.id);
+                                    return next;
+                                  });
+                                }}
+                              />
+                              <span>{t.title}</span>
+                            </div>
+                          ))}
+                          {available.length === 0 && (
+                            <p className="text-sm text-muted-foreground">
+                              No tracks available
+                            </p>
+                          )}
+                        </div>
+                        <DialogFooter className="flex justify-end gap-2">
+                          <Button
+                            variant="outline"
+                            onClick={() => setToAdd(new Set())}
+                          >
+                            Clear
+                          </Button>
+                          <Button
+                            onClick={applyAdd}
+                            disabled={adding || toAdd.size === 0}
+                          >
+                            {adding ? "Adding..." : "Add"}
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </>
+                )}
+              </div>
 
               <div className="absolute bottom-4 left-4 text-white z-10">
                 <h1 className="text-4xl font-bold drop-shadow-lg">
@@ -327,6 +414,7 @@ export default function AlbumDetailPage() {
               </div>
             </div>
 
+            {/* ───────────────────────────── Edit dialog */}
             {isOwner && (
               <Dialog open={editOpen} onOpenChange={setEditOpen}>
                 <DialogContent>
@@ -384,7 +472,7 @@ export default function AlbumDetailPage() {
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem
                               onClick={() => setEditPublic(true)}
-                              className="capitalize flex items-center gap-2"
+                              className="capitalize flex items=center gap-2"
                             >
                               {editPublic && <Check className="h-4 w-4" />}
                               Public
@@ -414,6 +502,7 @@ export default function AlbumDetailPage() {
               </Dialog>
             )}
 
+            {/* ───────────────────────────── Tracks grid */}
             <DndContext
               collisionDetection={closestCenter}
               onDragEnd={isOwner ? onDragEnd : () => {}}
@@ -432,7 +521,11 @@ export default function AlbumDetailPage() {
                   ) : tracks.length > 0 ? (
                     tracks.map((t) => (
                       <div key={t.id} className="w-[300px]">
-                        <SortableGridItem track={t} onChanged={load} />
+                        <SortableGridItem
+                          track={t}
+                          onChanged={load}
+                          draggable={isOwner!}
+                        />
                       </div>
                     ))
                   ) : (

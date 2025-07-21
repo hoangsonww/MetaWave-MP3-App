@@ -259,7 +259,9 @@ export default function TrackDetailPage() {
   return (
     <>
       <Head>
-        <title>{track ? `${track.title} — ${track.artist}` : "Loading…"}</title>
+        <title>
+          {track ? `${track.title} — ${track.artist}` : "Loading..."}
+        </title>
       </Head>
 
       <AppLayout>
@@ -311,7 +313,7 @@ export default function TrackDetailPage() {
                     {/* @ts-ignore */}
                     {navigator.share && (
                       <DropdownMenuItem onClick={onNativeShare}>
-                        <Share2 className="h-4 w-4 mr-2" /> Native…
+                        <Share2 className="h-4 w-4 mr-2" /> Share via...
                       </DropdownMenuItem>
                     )}
                   </DropdownMenuContent>
@@ -481,14 +483,16 @@ export default function TrackDetailPage() {
                         ))}
                       </div>
                       <Input
-                        placeholder="New tag…"
+                        placeholder="New tag..."
                         value={newTag}
                         onChange={(e) => setNewTag(e.target.value)}
                         onKeyDown={onTagKey}
                       />
                     </div>
                     <div className="flex items-center justify-between">
-                      <Label>Public</Label>
+                      <Label>
+                        {isPublic ? "Track is Public" : "Track is Private"}
+                      </Label>
                       <Switch checked={isPublic} onCheckedChange={setPublic} />
                     </div>
                     <Button
@@ -497,7 +501,7 @@ export default function TrackDetailPage() {
                       disabled={saving}
                     >
                       <Check className="h-4 w-4 mr-1" />
-                      {saving ? "Saving…" : "Save"}
+                      {saving ? "Saving..." : "Save"}
                     </Button>
                   </div>
                   <DialogFooter>
