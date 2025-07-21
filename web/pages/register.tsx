@@ -41,8 +41,8 @@ export default function RegisterPage() {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Check your email for a confirmation link");
-      router.push("/login");
+      toast.success("Signed up successfully! Welcome to MetaWave!");
+      router.push("/dashboard");
     }
   };
 

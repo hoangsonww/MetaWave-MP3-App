@@ -344,6 +344,15 @@ export default function Landing() {
                   Sign In <PlayCircle className="h-5 w-5" />
                 </Button>
               </Link>
+              <Link href="/dashboard">
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  className="gap-2 transition hover:-translate-y-[3px]"
+                >
+                  Already have an account? <Search className="h-5 w-5" />
+                </Button>
+              </Link>
             </div>
 
             {/* Scroll hint */}

@@ -91,10 +91,24 @@ export default function TrackDetailPage() {
       setDate(t.track_date ?? "");
       setPublic(t.is_public);
       setTags(t.tags ?? []);
-      const audio = new Audio(t.file_url);
-      audio.addEventListener("loadedmetadata", () =>
-        setDuration(formatDuration(audio.duration)),
-      );
+
+      if (t.duration_secs) {
+        setDuration(formatDuration(t.duration_secs));
+      } else {
+        try {
+          const audio = new Audio(t.file_url);
+          const handler = () => {
+            setDuration(formatDuration(audio.duration));
+            audio.removeEventListener("loadedmetadata", handler);
+          };
+          audio.addEventListener("loadedmetadata", handler);
+          audio.addEventListener("error", () => {
+            /* ignore CORS / private‑bucket errors */
+          });
+        } catch {
+          /* ignore */
+        }
+      }
     } catch (e: any) {
       toast.error(e.message || "Failed to load track");
     } finally {
@@ -110,7 +124,9 @@ export default function TrackDetailPage() {
 
   const onCopy = () => {
     navigator.clipboard.writeText(shareUrl);
-    toast.success("Link copied!");
+    toast.success(
+      "Link copied! Paste it to your friends so they can listen to this track!",
+    );
   };
   const onEmail = () =>
     window.open(
@@ -120,6 +136,7 @@ export default function TrackDetailPage() {
       "_self",
     );
   const onNativeShare = () => {
+    // @ts-ignore
     if (navigator.share) {
       navigator
         .share({
@@ -197,6 +214,8 @@ export default function TrackDetailPage() {
     if (!track) return;
     try {
       const audioRes = await fetch(track.file_url);
+      if (!audioRes.ok)
+        throw new Error("Unable to fetch audio file for download");
       const audioBuf = await audioRes.arrayBuffer();
       const writer = new ID3Writer(audioBuf);
 
@@ -204,11 +223,8 @@ export default function TrackDetailPage() {
         .setFrame("TIT2", title || track.title)
         .setFrame("TPE1", [artist || track.artist || ""])
         .setFrame("TALB", track.album_id ?? "")
-        .setFrame(
-          // @ts-ignore
-          "TYER",
-          (date || track.track_date || "").toString().slice(0, 4) || "",
-        )
+        // @ts-ignore
+        .setFrame("TYER", (date || track.track_date || "").slice(0, 4))
         .setFrame("COMM", {
           description: "Comment",
           text: "Downloaded from Audio Library",
@@ -216,13 +232,15 @@ export default function TrackDetailPage() {
 
       if (track.cover_art_url) {
         const imgRes = await fetch(track.cover_art_url);
-        const imgBuf = await imgRes.arrayBuffer();
-        // @ts-ignore
-        writer.setFrame("APIC", {
-          type: 3,
-          data: new Uint8Array(imgBuf),
-          description: "Cover",
-        });
+        if (imgRes.ok) {
+          const imgBuf = await imgRes.arrayBuffer();
+          // @ts-ignore
+          writer.setFrame("APIC", {
+            type: 3,
+            data: new Uint8Array(imgBuf),
+            description: "Cover",
+          });
+        }
       }
 
       writer.addTag();
