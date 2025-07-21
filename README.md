@@ -1,4 +1,4 @@
-# 🎵 **MetaWave – A Modern Personal Music Library & Sharing Hub**
+# 🎵 **MetaWave – A Modern MP3 Editor and Music Hub**
 
 **MetaWave** lets independent artists & collectors **upload MP3s, embed / replace cover art, batch update artwork, organize tracks into drag‑sortable albums, manage rich metadata, and share public profiles** – all in a sleek, fast, theme‑aware UI.
 
@@ -177,6 +177,12 @@ MetaWave aims to provide a polished, cohesive experience that feels both modern 
 
 <p align="center">
   <img src="docs/dashboard.png" alt="MetaWave Library View" width="100%" style="border-radius:14px;" />
+</p>
+
+### Track Detail
+
+<p align="center">
+  <img src="docs/track-detail.png" alt="MetaWave Track Detail" width="100%" style="border-radius:14px;" />
 </p>
 
 ### Albums List
