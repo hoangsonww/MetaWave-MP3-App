@@ -51,6 +51,9 @@ const typingWords = [
   "Remix",
   "Showcase",
   "Share",
+  "Visualize",
+  "Cover",
+  "Enhance",
 ];
 
 function useCountUp(target: number, duration = 1600) {

@@ -75,7 +75,7 @@ export default function RegisterPage() {
               <label className="sr-only" htmlFor="email">
                 Email
               </label>
-              <div className="relative">
+              <div className="relative mt-2">
                 <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   id="email"
@@ -98,7 +98,7 @@ export default function RegisterPage() {
               <label className="sr-only" htmlFor="password">
                 Password
               </label>
-              <div className="relative">
+              <div className="relative mt-2">
                 <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   id="password"
@@ -133,7 +133,7 @@ export default function RegisterPage() {
               <label className="sr-only" htmlFor="name">
                 Name
               </label>
-              <div className="relative">
+              <div className="relative mt-2">
                 <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   id="name"
@@ -155,7 +155,7 @@ export default function RegisterPage() {
               <label className="sr-only" htmlFor="handle">
                 Handle
               </label>
-              <div className="relative">
+              <div className="relative mt-2">
                 <AtSign className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   id="handle"

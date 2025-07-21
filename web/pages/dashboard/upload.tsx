@@ -10,43 +10,74 @@ import { toast } from "sonner";
 import Head from "next/head";
 import { useRouter } from "next/navigation";
 import { useSessionProfile } from "@/hooks/useSessionProfile";
+import { parseBuffer } from "music-metadata-browser";
 
 export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [artist, setArtist] = useState("");
   const [isPublic, setPublic] = useState(true);
-  const [cover, setCover] = useState<File | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { profile: session, loading: loadingSession } = useSessionProfile();
 
+  // Redirect to login if not authenticated
   useEffect(() => {
-    if (!loadingSession && session === null) {
+    if (!loadingSession && !session) {
       router.replace("/login");
     }
   }, [loadingSession, session, router]);
+
+  // When user selects an MP3, try to auto-extract embedded cover art
+  useEffect(() => {
+    if (!file) {
+      setCoverFile(null);
+      return;
+    }
+
+    file
+      .arrayBuffer()
+      .then((buffer) => {
+        const uint8 = new Uint8Array(buffer);
+        // @ts-ignore
+        return parseBuffer(uint8, { duration: false });
+      })
+      .then((metadata) => {
+        const pic = metadata.common.picture?.[0];
+        if (pic) {
+          const blob = new Blob([pic.data], { type: pic.format });
+          const ext = pic.format.split("/")[1] || "jpg";
+          const fname = `embedded.${ext}`;
+          const f = new File([blob], fname, { type: pic.format });
+          setCoverFile(f);
+        }
+      })
+      .catch((err) => {
+        console.warn("No embedded cover art found:", err);
+      });
+  }, [file]);
 
   const run = async () => {
     if (!file) return;
     setLoading(true);
 
-    const { data: sessionData, error: sessionError } =
-      await supabase.auth.getSession();
-    if (sessionError || !sessionData.session) {
+    // ensure session
+    const { data: sessData, error: sessErr } = await supabase.auth.getSession();
+    if (sessErr || !sessData.session) {
       toast.error("You must be logged in");
       setLoading(false);
       return;
     }
-    const owner_id = sessionData.session.user.id;
+    const owner_id = sessData.session.user.id;
 
-    // upload audio
+    // 1) upload audio
     const audioPath = `${owner_id}/${uuid()}.mp3`;
-    const { error: upErr } = await supabase.storage
+    const { error: uploadErr } = await supabase.storage
       .from("tracks")
       .upload(audioPath, file);
-    if (upErr) {
-      toast.error(upErr.message);
+    if (uploadErr) {
+      toast.error(uploadErr.message);
       setLoading(false);
       return;
     }
@@ -54,13 +85,13 @@ export default function UploadPage() {
       .from("tracks")
       .getPublicUrl(audioPath);
 
-    // upload cover if present
+    // 2) upload cover (extracted or manual)
     let cover_art_url: string | null = null;
-    if (cover) {
-      const coverPath = `${owner_id}/covers/${uuid()}-${cover.name}`;
+    if (coverFile) {
+      const coverPath = `${owner_id}/covers/${uuid()}-${coverFile.name}`;
       const { error: covErr } = await supabase.storage
         .from("covers")
-        .upload(coverPath, cover);
+        .upload(coverPath, coverFile);
       if (covErr) {
         toast.error(covErr.message);
       } else {
@@ -69,6 +100,7 @@ export default function UploadPage() {
       }
     }
 
+    // 3) insert into database
     try {
       await createTrack({
         owner_id,
@@ -88,7 +120,7 @@ export default function UploadPage() {
       setFile(null);
       setTitle("");
       setArtist("");
-      setCover(null);
+      setCoverFile(null);
     } catch (err: any) {
       console.error(err);
       toast.error(err.message || "Failed to create track");
@@ -126,19 +158,22 @@ export default function UploadPage() {
               onChange={(e) => setArtist(e.target.value)}
             />
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Public</span>
+              <span className="text-sm font-medium">
+                {isPublic ? "Public" : "Private"} Track
+              </span>
               <Switch checked={isPublic} onCheckedChange={setPublic} />
             </div>
             <div>
               <p className="mb-1 text-sm font-medium">Cover Art</p>
+              {/* user can override the extracted art here */}
               <Input
                 type="file"
                 accept="image/*"
-                onChange={(e) => setCover(e.target.files?.[0] || null)}
+                onChange={(e) => setCoverFile(e.target.files?.[0] || null)}
               />
-              {cover && (
+              {coverFile && (
                 <img
-                  src={URL.createObjectURL(cover)}
+                  src={URL.createObjectURL(coverFile)}
                   className="mt-3 h-40 w-full rounded object-cover"
                 />
               )}
