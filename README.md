@@ -269,8 +269,8 @@ For more details on the schema, refer to the [`database` directory](database), w
 To get started with MetaWave, follow these steps:
 
 ```bash
-git clone https://github.com/your-user/metawave.git
-cd metawave
+git clone https://github.com/hoangsonww/MetaWave-MP3-App.git
+cd MetaWave-MP3-App
 
 # Install
 npm install
