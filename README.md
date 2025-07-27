@@ -59,6 +59,7 @@ _Think: “A lightweight self‑hosted mini streaming console + curator workspac
 14. [Performance Techniques](#-performance-techniques)
 15. [Security & Validation](#-security--validation)
 16. [AWS Deployment](#-aws-deployment)
+    - [GitHub Actions](#github-actions)
     - [Ansible & Terraform](#ansible--terraform)
 17. [Docker & Containerization](#-docker--containerization)
     - [DevContainer](#devcontainer)
@@ -268,8 +269,8 @@ For more details on the schema, refer to the [`database` directory](database), w
 To get started with MetaWave, follow these steps:
 
 ```bash
-git clone https://github.com/your-user/metawave.git
-cd metawave
+git clone https://github.com/hoangsonww/MetaWave-MP3-App.git
+cd MetaWave-MP3-App
 
 # Install
 npm install
@@ -398,6 +399,24 @@ We also provide an optional **AWS deployment** setup for those who prefer a more
 - **GitHub Actions** for CI/CD, automating the build and deployment process.
 
 For detailed instructions on setting up the AWS deployment, refer to the [AWS Deployment Guide](docs/aws-deployment.md).
+
+### GitHub Actions
+
+MetaWave uses **GitHub Actions** for continuous integration and deployment. The workflow includes:
+
+- Running tests on every push and pull request.
+- Building the application for production.
+- Deploying to Vercel or AWS based on the branch.
+- Linting and formatting checks to ensure code quality.
+- Generating documentation and updating the README with the latest changes.
+- Sending notifications on build success or failure to the team.
+- Caching dependencies to speed up build times.
+- Using environment variables for sensitive information like API keys and database URLs.
+- and more...
+
+<p align="center">
+  <img src="docs/gh.png" alt="GitHub Actions Workflow" width="100%" style="border-radius:14px;" />
+</p>
 
 ### Ansible & Terraform
 
