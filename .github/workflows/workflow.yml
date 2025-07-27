@@ -251,7 +251,7 @@ jobs:
     steps:
       - name: Deployment Summary (log)
         run: |
-          echo "::group::🎉 metawave Deployment Summary"
+          echo "::group::🎉 Metawave Deployment Summary"
           echo ""
           echo "- 🌐 **Web App:** https://metawave.vercel.app"
           echo "- 🐳 **Container Image:** ghcr.io/${{ github.repository_owner }}/metawave:${{ github.sha }}"
@@ -263,7 +263,7 @@ jobs:
       - name: Write Summary to GitHub Step Summary
         run: |
           {
-            echo "## 🚀 metawave CI/CD Pipeline Complete"
+            echo "## 🚀 Metawave CI/CD Pipeline Complete"
             echo ""
             echo "| Item                  | Details                                                |"
             echo "| --------------------- | ------------------------------------------------------ |"
