@@ -1,35 +1,17 @@
-# Stage 1: Install dependencies, suppressing warnings/errors
-FROM node:20-alpine AS deps
-WORKDIR /app
-ENV NODE_ENV=production \
-    NEXT_TELEMETRY_DISABLED=1
-# Copy only package manifests to leverage Docker cache
-COPY package.json package-lock.json* yarn.lock* ./
-# Silence npm/yarn output and ignore errors
-RUN npm config set loglevel silent \
- && npm ci --ignore-scripts --silent || true
+# Dockerfile for the MetaWave web application
 
-# Stage 2: Build the app
+# 1) Build stage: install all deps, build, prune devDeps
 FROM node:20-alpine AS builder
 WORKDIR /app
-ENV NODE_ENV=production \
-    NEXT_TELEMETRY_DISABLED=1
-# Copy source & installed deps
+COPY package*.json ./
+RUN npm install
 COPY . .
-COPY --from=deps /app/node_modules ./node_modules
-# Build, suppressing any failures
-RUN npm run build --silent || true
+RUN npm run build && npm prune --production
 
-# Stage 3: Production image
-FROM node:20-alpine AS runner
+# 2) Runtime stage: copy over build + prod‑only node_modules
+FROM node:20-alpine
 WORKDIR /app
 ENV NODE_ENV=production
-# Copy only the runtime assets
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./
-# Expose default Next.js port
+COPY --from=builder /app .
 EXPOSE 3000
-# Start
-CMD ["npm", "start", "--", "--silent"]
+CMD ["npm", "start"]
