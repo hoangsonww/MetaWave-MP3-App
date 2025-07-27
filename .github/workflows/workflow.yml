@@ -118,27 +118,33 @@ jobs:
   # ────────────────────────────────────────────────────────────────
   build:
     name: "🏗 Build Next.js (web/)"
-    needs: [testing]
+    needs: [ testing ]
     runs-on: ubuntu-latest
     env:
+      NODE_VERSION: 18
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Install dependencies
+        run: npm --prefix web ci --legacy-peer-deps
+
+      - name: Create web/.env.local
         run: |
-          cd web
-          npm ci --legacy-peer-deps
+          mkdir -p web
+          cat <<EOF > web/.env.local
+          NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL:-https://example.supabase.co}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY:-anon_dummy_key}
+          EOF
 
       - name: Build Next.js app
-        run: |
-          cd web
-          npm run build
+        run: npm --prefix web run build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -147,7 +153,7 @@ jobs:
           path: |
             web/.next/**
             web/public/**
-            web/next.config.js
+            web/next.config.ts
 
   # ────────────────────────────────────────────────────────────────
   #  🐳 4. Build & Push Docker Image                               #
