@@ -160,7 +160,7 @@ jobs:
   # ────────────────────────────────────────────────────────────────
   docker:
     name: "🐳 Build & Push Docker Image"
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -176,8 +176,8 @@ jobs:
       - name: Build & push boxed image
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ./Dockerfile
+          context: web                # build context is the web/ folder
+          file: web/Dockerfile        # point at your Dockerfile in web/
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/boxed:${{ github.sha }}
