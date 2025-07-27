@@ -122,8 +122,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_VERSION: 18
-      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -132,19 +130,21 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Install dependencies
-        run: npm --prefix web ci --legacy-peer-deps
-
-      - name: Create web/.env.local
+      - name: Create web/.env.local with dummy Supabase creds
         run: |
           mkdir -p web
-          cat <<EOF > web/.env.local
-          NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL:-https://example.supabase.co}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY:-anon_dummy_key}
+          cat > web/.env.local <<EOF
+          NEXT_PUBLIC_SUPABASE_URL=https://example.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY=anon_dummy_key
           EOF
 
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci --legacy-peer-deps
+
       - name: Build Next.js app
-        run: npm --prefix web run build
+        working-directory: web
+        run: npm run build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
