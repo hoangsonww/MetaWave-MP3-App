@@ -1,35 +1,26 @@
-# Stage 1: Install dependencies, suppressing warnings/errors
-FROM node:20-alpine AS deps
-WORKDIR /app
-ENV NODE_ENV=production \
-    NEXT_TELEMETRY_DISABLED=1
-# Copy only package manifests to leverage Docker cache
-COPY package.json package-lock.json* yarn.lock* ./
-# Silence npm/yarn output and ignore errors
-RUN npm config set loglevel silent \
- && npm ci --ignore-scripts --silent || true
-
-# Stage 2: Build the app
+# Stage 1: Build with dummy NEXT_PUBLIC_* env
 FROM node:20-alpine AS builder
 WORKDIR /app
-ENV NODE_ENV=production \
-    NEXT_TELEMETRY_DISABLED=1
-# Copy source & installed deps
-COPY . .
-COPY --from=deps /app/node_modules ./node_modules
-# Build, suppressing any failures
-RUN npm run build --silent || true
 
-# Stage 3: Production image
-FROM node:20-alpine AS runner
+# inject dummy env so Next.js build sees them
+ENV NEXT_PUBLIC_SUPABASE_URL=https://example.supabase.co
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=anon_dummy_key
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+RUN npm run build
+
+# Stage 2: Prod image
+FROM node:20-alpine
 WORKDIR /app
 ENV NODE_ENV=production
-# Copy only the runtime assets
+
 COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./
-# Expose default Next.js port
+
 EXPOSE 3000
-# Start
-CMD ["npm", "start", "--", "--silent"]
+CMD ["npm","start"]

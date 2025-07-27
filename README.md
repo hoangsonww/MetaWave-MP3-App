@@ -85,6 +85,10 @@ Use it to **curate demos**, **bundle thematic EP drops**, **share works-in-progr
 > [!CAUTION]
 > Due to Supabase's current limitations, **MetaWave does not allow files larger than 10MB**. This is a temporary constraint until we can implement a more robust file handling solution.
 
+### Live App
+
+MetaWave is **LIVE**! You can try it out at **[metawave.vercel.app](https://metawave.vercel.app).** Feel free to create an account, upload some tracks, and explore the features! 🚀
+
 ## ✨ Core Features
 
 MetaWave is designed to be a **fast, responsive, and intuitive** music library management tool with the following core features:
