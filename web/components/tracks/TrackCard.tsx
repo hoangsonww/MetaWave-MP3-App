@@ -111,8 +111,11 @@ export function TrackCard({
             </div>
           </div>
 
-          {/* waveform */}
-          <div className="rounded-md border border-border">
+          {/* waveform - stop propagation so play clicks don't bubble */}
+          <div
+            className="rounded-md border border-border"
+            onClick={(e) => e.stopPropagation()}
+          >
             <AudioPlayerWave src={track.file_url} small />
           </div>
 

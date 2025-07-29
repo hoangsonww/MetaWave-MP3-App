@@ -381,7 +381,7 @@ export default function TrackDetailPage() {
             </div>
 
             <div className="w-full rounded-md border border-border overflow-hidden">
-              <AudioPlayerWave src={track!.file_url} />
+              <AudioPlayerWave src={track!.file_url} showPlayButton={true} />
             </div>
 
             <div className="rounded-lg border border-border bg-card/70 p-6 space-y-6">

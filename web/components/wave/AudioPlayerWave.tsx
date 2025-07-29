@@ -8,10 +8,12 @@ import { Play, Pause } from "lucide-react";
 
 export default function AudioPlayerWave({
   src,
-  small,
+  small = false,
+  showPlayButton = true,
 }: {
   src: string;
   small?: boolean;
+  showPlayButton?: boolean;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const ws = useRef<WaveSurfer | null>(null);
@@ -51,6 +53,8 @@ export default function AudioPlayerWave({
     ws.current.load(src);
     ws.current.on("ready", () => setReady(true));
     ws.current.on("finish", () => setPlaying(false));
+    ws.current.on("play", () => setPlaying(true));
+    ws.current.on("pause", () => setPlaying(false));
 
     return () => {
       try {
@@ -69,14 +73,26 @@ export default function AudioPlayerWave({
   const toggle = () => {
     if (!ready || !ws.current) return;
     ws.current.playPause();
-    setPlaying(ws.current.isPlaying());
+    // playing state will be updated by on('play') / on('pause')
   };
 
   return (
     <div className="flex items-center gap-3 p-2">
-      <Button size="sm" variant="outline" onClick={toggle} disabled={!ready}>
-        {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-      </Button>
+      {showPlayButton && (
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={toggle}
+          disabled={!ready}
+          className="flex-shrink-0"
+        >
+          {playing ? (
+            <Pause className="h-4 w-4" />
+          ) : (
+            <Play className="h-4 w-4" />
+          )}
+        </Button>
+      )}
       <div className="flex-1" ref={containerRef} />
     </div>
   );
