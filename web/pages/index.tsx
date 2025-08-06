@@ -205,15 +205,43 @@ const faqs = [
   },
   {
     q: "Do you alter my audio files?",
-    a: "We store your originals. Cover embedding tasks never mutate the source unless explicitly chosen.",
+    a: "We store all your originals. Cover embedding tasks never mutate the source unless explicitly chosen.",
   },
   {
     q: "Can I hide drafts?",
-    a: "Absolutely - set tracks or albums private until you are ready.",
+    a: "Absolutely - set tracks or albums private until you are ready to publish them!",
   },
   {
     q: "Will there be analytics?",
-    a: "Planned for upcoming paid tiers (play counts, geo aggregations, retention).",
+    a: "Yes - this feature is planned for upcoming paid tiers (including play counts, geo aggregations, retention).",
+  },
+  {
+    q: "Can I download edited tracks?",
+    a: "Yes, you can export any track with its embedded cover art at any time.",
+  },
+  {
+    q: "What file formats are supported?",
+    a: "Currently we support MP3 uploads. Future formats may be added based on demand.",
+  },
+  {
+    q: "What is the maximum file size?",
+    a: "The current limit is 50-100 MB per track. This may increase in future tiers.",
+  },
+  {
+    q: "How do I report issues or suggest features?",
+    a: "Please contact our creator directly at sonnguyenhoang.com or visit our GitHub issues page to share your feedback. We value your input!",
+  },
+  {
+    q: "Is there a mobile app?",
+    a: "Currently MetaWave is web-only, but we are exploring mobile options based on user interest.",
+  },
+  {
+    q: "Can I share my tracks and albums to collaborate with others?",
+    a: "Yes, you can toggle public visibility for any track or album and share the link with others.",
+  },
+  {
+    q: "How do I get started?",
+    a: "Simply create an account and start uploading your audio files. The dashboard will guide you through the process.",
   },
 ];
 
@@ -414,7 +442,7 @@ export default function Landing() {
           </h2>
           <p className="mb-12 text-center text-sm text-muted-foreground max-w-2xl mx-auto">
             Build a cohesive sonic catalog with visual clarity, speed and
-            delight.
+            delight. 🎹
           </p>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {featureBlocks.map((f) => (
@@ -529,9 +557,14 @@ export default function Landing() {
 
         {/* ---------------- Tech Stack ---------------- */}
         <section className="w-full max-w-6xl px-6">
-          <h2 className="mb-10 text-center text-3xl font-bold">
+          <h2 className="mb-2 text-center text-3xl font-bold">
             Powered by Modern Tech
           </h2>
+          <p className="mb-6 text-center text-sm text-muted-foreground max-w-2xl mx-auto">
+            Built with a focus on performance, scalability and developer
+            experience. We leverage the latest web technologies to deliver a
+            seamless audio management experience. 🎵
+          </p>
           <div className="flex flex-wrap justify-center gap-8">
             {techStack.map((t) => (
               <div
@@ -550,7 +583,7 @@ export default function Landing() {
         {/* ---------------- Testimonials ---------------- */}
         <section className="w-full max-w-6xl px-6">
           <h2 className="mb-10 text-center text-3xl font-bold">
-            Creators Already Feeling the Flow
+            Creators Are Already Feeling the Flow
           </h2>
           <div className="grid gap-8 md:grid-cols-3">
             {testimonials.map((t) => (
@@ -578,8 +611,9 @@ export default function Landing() {
             Pricing & Future Tiers
           </h2>
           <p className="mb-12 text-center text-sm text-muted-foreground max-w-xl mx-auto">
-            Beta is completely free. Paid plans unlock deeper collaboration,
-            analytics & enhanced storage once we exit beta.
+            During our public beta, all tiers are free! We value your feedback
+            and will iterate based on your needs. Future tiers will unlock even
+            more advanced features and team collaboration tools. ✨
           </p>
           <div className="grid gap-8 md:grid-cols-3">
             {tiers.map((tier) => (
@@ -638,7 +672,14 @@ export default function Landing() {
 
         {/* ---------------- FAQ ---------------- */}
         <section className="w-full max-w-5xl px-6">
-          <h2 className="mb-8 text-center text-3xl font-bold">FAQ</h2>
+          <h2 className="mb-4 text-center text-3xl font-bold">
+            Frequently Asked Questions
+          </h2>
+          <p className="mb-8 text-center text-sm text-muted-foreground max-w-2xl mx-auto">
+            Have questions? We have answers! Here are some common queries from
+            our community. If you need more help, feel free to reach out via our
+            GitHub repository's Issues page or support email. 📧
+          </p>
           <Accordion type="single" collapsible className="space-y-2">
             {faqs.map((f, i) => (
               <AccordionItem
