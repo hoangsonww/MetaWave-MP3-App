@@ -1,8 +1,8 @@
 # 🎵 **MetaWave – A Modern MP3 Editor and Music Hub**
 
-**MetaWave** lets independent artists & collectors **upload MP3s, embed / replace cover art, batch update artwork, organize tracks into drag‑sortable albums, manage rich metadata, and share public profiles** – all in a sleek, fast, theme‑aware UI.
+**MetaWave** lets independent artists & collectors **upload MP3s, embed / replace cover art, batch update artwork, organize tracks into drag‑sortable albums, manage rich metadata, collaborate with others, and share public profiles** – all in a sleek, fast, theme‑aware UI.
 
-_Think: “A lightweight self‑hosted mini streaming console + curator workspace” built on an audibly opinionated stack._ ⚡
+_**MetaWave** - “A lightweight self‑hosted mini streaming console + collaborative curator workspace” built on an audibly opinionated stack._ ⚡
 
 <p align="center">
   <img src="docs/logo.png" alt="MetaWave Hero" width="45%" style="border-radius:14px;" />

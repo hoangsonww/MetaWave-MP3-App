@@ -33,6 +33,7 @@ import {
   Star,
   Check,
   Mail,
+  ArrowDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -200,19 +201,55 @@ const tiers = [
 const faqs = [
   {
     q: "Is MetaWave free right now?",
-    a: "Yes. During beta the Creator tier is entirely free.",
+    a: "Yes. During beta the Creator, Studio, and Label tiers are entirely free!",
   },
   {
     q: "Do you alter my audio files?",
-    a: "We store your originals. Cover embedding tasks never mutate the source unless explicitly chosen.",
+    a: "We store all your originals. Cover embedding tasks never mutate the source unless explicitly chosen.",
   },
   {
     q: "Can I hide drafts?",
-    a: "Absolutely - set tracks or albums private until you are ready.",
+    a: "Absolutely - set tracks or albums private until you are ready to publish them!",
   },
   {
     q: "Will there be analytics?",
-    a: "Planned for upcoming paid tiers (play counts, geo aggregations, retention).",
+    a: "Yes - this feature is planned for upcoming paid tiers (including play counts, geo aggregations, retention).",
+  },
+  {
+    q: "Can I download edited tracks?",
+    a: "Yes, you can export any track with its embedded cover art at any time.",
+  },
+  {
+    q: "What file formats are supported?",
+    a: "Currently we support MP3 uploads. Future formats may be added based on demand.",
+  },
+  {
+    q: "What is the maximum file size?",
+    a: "The current limit is 50-100 MB per track. This may increase in future tiers.",
+  },
+  {
+    q: "How do I report issues or suggest features?",
+    a: "Please contact our creator directly at sonnguyenhoang.com or visit our GitHub issues page to share your feedback. We value your input!",
+  },
+  {
+    q: "Is there a mobile app?",
+    a: "Currently MetaWave is web-only, but we are exploring mobile options based on user interest.",
+  },
+  {
+    q: "Can I share my tracks and albums to collaborate with others?",
+    a: "Yes, you can toggle public visibility for any track or album and share the link with others.",
+  },
+  {
+    q: "How do I get started?",
+    a: "Simply create an account and start uploading your audio files. The dashboard will guide you through the process.",
+  },
+  {
+    q: "Can I use MetaWave for commercial projects?",
+    a: "Yes, you can use MetaWave for both personal and commercial audio projects. We do not impose restrictions on the use of your content. However, please ensure you have the rights to any audio you upload.",
+  },
+  {
+    q: "What happens to my data if I stop using MetaWave?",
+    a: "You can export your tracks and albums at any time. If you choose to delete your account, all your data will be permanently removed from our servers.",
   },
 ];
 
@@ -324,9 +361,12 @@ export default function Landing() {
               your audio.
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-              A focused toolkit for creators: import MP3s, mass‑update cover
-              art, sculpt albums with drag & drop waveforms, and present a
-              polished public profile - all in one accelerated dashboard.
+              A focused toolkit for creators –{" "}
+              <span className="font-semibold text-primary">
+                import MP3s, mass-update cover art, sculpt albums with drag &
+                drop waveforms, and present a polished public profile
+              </span>{" "}
+              – all in one accelerated dashboard 🚀
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link href="/register">
@@ -360,8 +400,10 @@ export default function Landing() {
 
             {/* Scroll hint */}
             <div className="mt-16 flex flex-col items-center gap-2 text-xs text-muted-foreground">
-              <span className="tracking-wide">SCROLL TO EXPLORE</span>
-              <div className="h-6 w-[2px] animate-pulse bg-primary/70 rounded-full" />
+              <span className="tracking-wide text-primary">
+                SCROLL TO EXPLORE
+              </span>
+              <ArrowDown className="h-6 w-6 animate-bounce text-primary/70" />
             </div>
           </div>
         </section>
@@ -408,7 +450,7 @@ export default function Landing() {
           </h2>
           <p className="mb-12 text-center text-sm text-muted-foreground max-w-2xl mx-auto">
             Build a cohesive sonic catalog with visual clarity, speed and
-            delight.
+            delight. 🎹
           </p>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {featureBlocks.map((f) => (
@@ -512,7 +554,7 @@ export default function Landing() {
                 <div className="mt-6 h-40 rounded-lg border bg-background/60 flex flex-col justify-center items-center gap-2">
                   <Headphones className="h-8 w-8 text-primary animate-pulse" />
                   <p className="text-xs text-muted-foreground">
-                    (Interactive preview placeholder)
+                    Waveform Player
                   </p>
                 </div>
               </div>
@@ -523,9 +565,14 @@ export default function Landing() {
 
         {/* ---------------- Tech Stack ---------------- */}
         <section className="w-full max-w-6xl px-6">
-          <h2 className="mb-10 text-center text-3xl font-bold">
+          <h2 className="mb-2 text-center text-3xl font-bold">
             Powered by Modern Tech
           </h2>
+          <p className="mb-6 text-center text-sm text-muted-foreground max-w-2xl mx-auto">
+            Built with a focus on performance, scalability and developer
+            experience. We leverage the latest web technologies to deliver a
+            seamless audio management experience. 🎵
+          </p>
           <div className="flex flex-wrap justify-center gap-8">
             {techStack.map((t) => (
               <div
@@ -544,7 +591,7 @@ export default function Landing() {
         {/* ---------------- Testimonials ---------------- */}
         <section className="w-full max-w-6xl px-6">
           <h2 className="mb-10 text-center text-3xl font-bold">
-            Creators Already Feeling the Flow
+            Creators Are Already Feeling the Flow
           </h2>
           <div className="grid gap-8 md:grid-cols-3">
             {testimonials.map((t) => (
@@ -572,8 +619,9 @@ export default function Landing() {
             Pricing & Future Tiers
           </h2>
           <p className="mb-12 text-center text-sm text-muted-foreground max-w-xl mx-auto">
-            Beta is completely free. Paid plans unlock deeper collaboration,
-            analytics & enhanced storage once we exit beta.
+            During our public beta, all tiers are free! We value your feedback
+            and will iterate based on your needs. Future tiers will unlock even
+            more advanced features and team collaboration tools. ✨
           </p>
           <div className="grid gap-8 md:grid-cols-3">
             {tiers.map((tier) => (
@@ -632,7 +680,14 @@ export default function Landing() {
 
         {/* ---------------- FAQ ---------------- */}
         <section className="w-full max-w-5xl px-6">
-          <h2 className="mb-8 text-center text-3xl font-bold">FAQ</h2>
+          <h2 className="mb-4 text-center text-3xl font-bold">
+            Frequently Asked Questions
+          </h2>
+          <p className="mb-8 text-center text-sm text-muted-foreground max-w-2xl mx-auto">
+            Have questions? We have answers! Here are some common queries from
+            our community. If you need more help, feel free to reach out via our
+            GitHub repository's Issues page or support email. 📧
+          </p>
           <Accordion type="single" collapsible className="space-y-2">
             {faqs.map((f, i) => (
               <AccordionItem
