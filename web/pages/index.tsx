@@ -33,6 +33,7 @@ import {
   Star,
   Check,
   Mail,
+  ArrowDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -200,7 +201,7 @@ const tiers = [
 const faqs = [
   {
     q: "Is MetaWave free right now?",
-    a: "Yes. During beta the Creator tier is entirely free.",
+    a: "Yes. During beta the Creator, Studio, and Label tiers are entirely free!",
   },
   {
     q: "Do you alter my audio files?",
@@ -324,9 +325,12 @@ export default function Landing() {
               your audio.
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-              A focused toolkit for creators: import MP3s, mass‑update cover
-              art, sculpt albums with drag & drop waveforms, and present a
-              polished public profile - all in one accelerated dashboard.
+              A focused toolkit for creators –{" "}
+              <span className="font-semibold text-primary">
+                import MP3s, mass-update cover art, sculpt albums with drag &
+                drop waveforms, and present a polished public profile
+              </span>{" "}
+              – all in one accelerated dashboard 🚀
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link href="/register">
@@ -360,8 +364,10 @@ export default function Landing() {
 
             {/* Scroll hint */}
             <div className="mt-16 flex flex-col items-center gap-2 text-xs text-muted-foreground">
-              <span className="tracking-wide">SCROLL TO EXPLORE</span>
-              <div className="h-6 w-[2px] animate-pulse bg-primary/70 rounded-full" />
+              <span className="tracking-wide text-primary">
+                SCROLL TO EXPLORE
+              </span>
+              <ArrowDown className="h-6 w-6 animate-bounce text-primary/70" />
             </div>
           </div>
         </section>
@@ -512,7 +518,7 @@ export default function Landing() {
                 <div className="mt-6 h-40 rounded-lg border bg-background/60 flex flex-col justify-center items-center gap-2">
                   <Headphones className="h-8 w-8 text-primary animate-pulse" />
                   <p className="text-xs text-muted-foreground">
-                    (Interactive preview placeholder)
+                    Waveform Player
                   </p>
                 </div>
               </div>
