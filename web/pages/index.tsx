@@ -243,6 +243,14 @@ const faqs = [
     q: "How do I get started?",
     a: "Simply create an account and start uploading your audio files. The dashboard will guide you through the process.",
   },
+  {
+    q: "Can I use MetaWave for commercial projects?",
+    a: "Yes, you can use MetaWave for both personal and commercial audio projects. We do not impose restrictions on the use of your content. However, please ensure you have the rights to any audio you upload.",
+  },
+  {
+    q: "What happens to my data if I stop using MetaWave?",
+    a: "You can export your tracks and albums at any time. If you choose to delete your account, all your data will be permanently removed from our servers.",
+  },
 ];
 
 const roadmap = [
