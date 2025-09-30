@@ -9,7 +9,7 @@ import {
   Legend,
 } from "recharts";
 
-export interface TagSlice {
+export interface TagSlice extends Record<string, string | number> {
   name: string;
   value: number;
 }
