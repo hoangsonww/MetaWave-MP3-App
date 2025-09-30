@@ -140,6 +140,12 @@ function Header({
             Albums
           </Link>
           <Link
+            href="/dashboard/insights"
+            className={navActive(router, "/dashboard/insights")}
+          >
+            Insights
+          </Link>
+          <Link
             href="/dashboard/profile"
             className={navActive(router, "/dashboard/profile")}
           >
