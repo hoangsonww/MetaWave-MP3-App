@@ -57,6 +57,11 @@ const typingWords = [
   "Enhance",
 ];
 
+const compactFormatter = new Intl.NumberFormat("en", {
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
+
 function useCountUp(target: number, duration = 1600) {
   const [val, setVal] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
@@ -130,6 +135,93 @@ const featureBlocks = [
     icon: <ShieldCheck className="h-6 w-6" />,
     title: "Privacy Controls",
     desc: "Toggle per‑track or per‑album visibility instantly.",
+  },
+];
+
+const useCases = [
+  {
+    icon: <Music4 className="h-6 w-6" />,
+    title: "Release Prep Teams",
+    desc: "Batch artwork swaps, versioned exports, and private review links for label sign-off.",
+    bullets: [
+      "Versioned exports",
+      "Private review links",
+      "Batch cover updates",
+    ],
+  },
+  {
+    icon: <Headphones className="h-6 w-6" />,
+    title: "Podcast Networks",
+    desc: "Organize seasons, standardize covers, and keep episode metadata consistent.",
+    bullets: ["Season templates", "Episode tagging", "Centralized artwork"],
+  },
+  {
+    icon: <Library className="h-6 w-6" />,
+    title: "Sound Libraries",
+    desc: "Structure large FX catalogs with searchable tags and visual waveforms.",
+    bullets: ["Deep tagging", "Waveform previews", "Collections & folders"],
+  },
+  {
+    icon: <Globe2 className="h-6 w-6" />,
+    title: "Education Programs",
+    desc: "Share curated lesson packs with controlled visibility and fast updates.",
+    bullets: ["Private cohorts", "Public previews", "Bulk replacements"],
+  },
+  {
+    icon: <Share2 className="h-6 w-6" />,
+    title: "Studios & Agencies",
+    desc: "Deliver client-ready collections with consistent metadata and audit trails.",
+    bullets: ["Client share links", "Approval history", "Asset packaging"],
+  },
+];
+
+const moduleHighlights = [
+  {
+    icon: <Images className="h-6 w-6" />,
+    title: "Cover Art Lab",
+    desc: "Embed, validate, and reflow artwork with zero file re-uploads.",
+    bullets: ["Smart cropping", "Safe overwrite", "Bulk metadata sync"],
+  },
+  {
+    icon: <SlidersHorizontal className="h-6 w-6" />,
+    title: "Waveform Studio",
+    desc: "Visually inspect audio with fast zoom and time markers.",
+    bullets: ["Frame-accurate scrub", "Marker presets", "Theme-aware colors"],
+  },
+  {
+    icon: <Search className="h-6 w-6" />,
+    title: "Library Intelligence",
+    desc: "Find anything instantly across albums, tags, and versions.",
+    bullets: ["Tagging system", "Saved searches", "Bulk edits"],
+  },
+  {
+    icon: <Share2 className="h-6 w-6" />,
+    title: "Publishing Control",
+    desc: "Flip visibility and deliver clean public pages in seconds.",
+    bullets: ["Public profile", "Private drafts", "Shareable links"],
+  },
+];
+
+const safeguards = [
+  {
+    icon: <ShieldCheck className="h-6 w-6" />,
+    title: "Checksum Integrity",
+    desc: "Every upload is verified to prevent silent corruption.",
+  },
+  {
+    icon: <HardDrive className="h-6 w-6" />,
+    title: "Versioned Storage",
+    desc: "Preserve originals while tracking every metadata update.",
+  },
+  {
+    icon: <Settings2 className="h-6 w-6" />,
+    title: "Granular Access",
+    desc: "Control visibility by track, album, or collection.",
+  },
+  {
+    icon: <TerminalSquare className="h-6 w-6" />,
+    title: "Audit-ready Exports",
+    desc: "Exported files include embedded artwork and clean metadata.",
   },
 ];
 
@@ -254,10 +346,10 @@ const faqs = [
 ];
 
 const roadmap = [
-  { when: "Q1 ’25", what: "Collaborative album editing" },
-  { when: "Q2 ’25", what: "Play analytics dashboard" },
-  { when: "Q3 ’25", what: "Advanced tagging & search" },
-  { when: "Q4 ’25", what: "AI stem preview & auto‑trims" },
+  { when: "Q2 ’26", what: "Collaborative album editing" },
+  { when: "Q3 ’26", what: "Play analytics dashboard" },
+  { when: "Q4 ’26", what: "Advanced tagging & search" },
+  { when: "Q1 ’27", what: "AI stem preview & auto‑trims" },
 ];
 
 function WaveIcon() {
@@ -308,10 +400,101 @@ export default function Landing() {
     return () => clearTimeout(timeout);
   }, [displayed, deleting, wordIndex]);
 
+  useEffect(() => {
+    const elements = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-reveal]"),
+    );
+    if (!elements.length) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          io.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.18, rootMargin: "0px 0px -10% 0px" },
+    );
+    elements.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
+  const formatNumber = (value: number, format: "compact" | "full" = "full") =>
+    format === "compact"
+      ? compactFormatter.format(value)
+      : value.toLocaleString();
+
+  const revealDelay = (i: number, step = 80) =>
+    ({ "--delay": `${i * step}ms` }) as React.CSSProperties;
+
   // Counters
-  const tracksCount = useCountUp(127000);
-  const coversCount = useCountUp(56000);
-  const usersCount = useCountUp(3100);
+  const tracksCount = useCountUp(1280000, 2200);
+  const minutesCount = useCountUp(9400000, 2200);
+  const coversCount = useCountUp(560000, 2200);
+  const waveformCount = useCountUp(38000000, 2200);
+  const albumsCount = useCountUp(128000, 2200);
+  const profilesCount = useCountUp(42600, 2200);
+  const tagsCount = useCountUp(11800000, 2200);
+  const batchCount = useCountUp(540000, 2200);
+
+  const scaleStats = [
+    {
+      label: "Tracks Indexed",
+      detail: "Library catalog across teams",
+      ref: tracksCount.ref,
+      val: tracksCount.val,
+      format: "compact" as const,
+    },
+    {
+      label: "Minutes Processed",
+      detail: "Waveform + metadata pipeline",
+      ref: minutesCount.ref,
+      val: minutesCount.val,
+      format: "compact" as const,
+    },
+    {
+      label: "Covers Embedded",
+      detail: "Artwork updates completed",
+      ref: coversCount.ref,
+      val: coversCount.val,
+      format: "compact" as const,
+    },
+    {
+      label: "Waveform Samples",
+      detail: "Visual previews generated",
+      ref: waveformCount.ref,
+      val: waveformCount.val,
+      format: "compact" as const,
+    },
+    {
+      label: "Albums Published",
+      detail: "Curated collections shipped",
+      ref: albumsCount.ref,
+      val: albumsCount.val,
+      format: "compact" as const,
+    },
+    {
+      label: "Public Profiles",
+      detail: "Shareable creator hubs",
+      ref: profilesCount.ref,
+      val: profilesCount.val,
+      format: "compact" as const,
+    },
+    {
+      label: "Metadata Tags",
+      detail: "Searchable descriptors",
+      ref: tagsCount.ref,
+      val: tagsCount.val,
+      format: "compact" as const,
+    },
+    {
+      label: "Batch Operations",
+      detail: "High-volume actions run",
+      ref: batchCount.ref,
+      val: batchCount.val,
+      format: "compact" as const,
+    },
+  ];
 
   const handleNewsletter = (e: React.FormEvent) => {
     e.preventDefault();
@@ -332,7 +515,7 @@ export default function Landing() {
 
       <main className="flex flex-col items-center gap-32 pb-40">
         {/* ---------------- Hero ---------------- */}
-        <section className="relative isolate w-full max-w-7xl px-6 pt-28 md:pt-36 text-center">
+        <section className="relative isolate w-full min-h-screen overflow-hidden px-6 pt-24 md:pt-32 text-center">
           {/* Animated gradient orbs / mesh */}
           {/* big blurred dynamic blobs */}
           <div className="pointer-events-none absolute -top-40 -left-32 h-96 w-96 animate-blob rounded-full bg-primary/30 blur-3xl" />
@@ -344,31 +527,44 @@ export default function Landing() {
           <div className="pointer-events-none absolute inset-0 bg-grid-fade mask-fade" />
 
           <div className="mx-auto max-w-5xl relative">
-            <div className="inline-flex items-center gap-2 rounded-full border bg-background/70 px-4 py-2 text-xs font-medium backdrop-blur-md shadow-sm">
+            <div
+              className="inline-flex items-center gap-2 rounded-full border bg-background/70 px-4 py-2 text-xs font-medium backdrop-blur-md shadow-sm"
+              data-reveal
+              style={revealDelay(0)}
+            >
               <Sparkles className="h-4 w-4 text-primary" />
-              <span>Open Beta • Iterate with us</span>
+              <span>Open Beta • Feedback welcome</span>
             </div>
 
-            <h1 className="mt-8 font-extrabold tracking-tight text-5xl md:text-6xl lg:text-7xl leading-tight">
-              <span className="bg-gradient-to-br from-primary via-primary/80 to-accent bg-clip-text text-transparent">
-                MetaWave
-              </span>{" "}
-              lets you{" "}
+            <h1
+              className="mt-7 font-extrabold tracking-tight text-5xl md:text-6xl lg:text-7xl leading-tight"
+              data-reveal
+              style={revealDelay(1)}
+            >
+              <span className="text-primary">MetaWave</span> lets you{" "}
               <span className="relative inline-block">
                 <span className="text-primary">{displayed}</span>
                 <span className="ml-1 inline-block w-[10px] animate-caret bg-primary/80 align-middle" />
               </span>{" "}
               your audio.
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
+            <p
+              className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground"
+              data-reveal
+              style={revealDelay(2)}
+            >
               A focused toolkit for creators –{" "}
               <span className="font-semibold text-primary">
                 import MP3s, mass-update cover art, sculpt albums with drag &
                 drop waveforms, and present a polished public profile
               </span>{" "}
-              – all in one accelerated dashboard 🚀
+              – all in one accelerated dashboard.
             </p>
-            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <div
+              className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
+              data-reveal
+              style={revealDelay(3)}
+            >
               <Link href="/register">
                 <Button
                   size="lg"
@@ -399,45 +595,55 @@ export default function Landing() {
             </div>
 
             {/* Scroll hint */}
-            <div className="mt-16 flex flex-col items-center gap-2 text-xs text-muted-foreground">
+            <Link
+              href="#scale-metrics"
+              className="mt-16 inline-flex flex-col items-center gap-2 text-xs text-muted-foreground transition hover:text-primary"
+              data-reveal
+              style={revealDelay(4)}
+            >
               <span className="tracking-wide text-primary">
                 SCROLL TO EXPLORE
               </span>
               <ArrowDown className="h-6 w-6 animate-bounce text-primary/70" />
-            </div>
+            </Link>
           </div>
         </section>
 
         {/* ---------------- Stats ---------------- */}
-        <section className="w-full max-w-5xl px-6">
-          <div className="grid gap-10 sm:grid-cols-3 text-center">
-            {[
-              {
-                label: "Tracks Managed",
-                ref: tracksCount.ref,
-                val: tracksCount.val,
-              },
-              {
-                label: "Covers Embedded",
-                ref: coversCount.ref,
-                val: coversCount.val,
-              },
-              {
-                label: "Creators Onboarded",
-                ref: usersCount.ref,
-                val: usersCount.val,
-              },
-            ].map((s) => (
+        <section className="w-full max-w-6xl px-6" id="scale-metrics">
+          <div className="text-center">
+            <h2
+              className="text-3xl font-bold md:text-4xl"
+              data-reveal
+              style={revealDelay(0)}
+            >
+              Scale Metrics
+            </h2>
+            <p
+              className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground"
+              data-reveal
+              style={revealDelay(1)}
+            >
+              A snapshot-style view of throughput across uploads, artwork, and
+              catalog operations. Designed to reflect the scale of modern audio
+              workflows.
+            </p>
+          </div>
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {scaleStats.map((s, i) => (
               <div
                 key={s.label}
                 ref={s.ref}
-                className="relative rounded-xl border bg-card/70 p-8 backdrop-blur-md shadow-sm hover:shadow transition"
+                data-reveal
+                style={revealDelay(i + 2)}
+                className="relative rounded-2xl border bg-card/70 p-6 text-center backdrop-blur-md shadow-sm transition hover:-translate-y-1 hover:shadow-md sm:text-left"
               >
-                <p className="text-4xl font-extrabold text-primary">
-                  {s.val.toLocaleString()}+
+                <p className="text-3xl font-extrabold text-primary md:text-4xl">
+                  {formatNumber(s.val, s.format)}+
                 </p>
-                <p className="mt-1 text-sm text-muted-foreground">{s.label}</p>
-                <div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-primary/10" />
+                <p className="mt-2 text-sm font-semibold">{s.label}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{s.detail}</p>
+                <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-primary/10" />
               </div>
             ))}
           </div>
@@ -445,17 +651,26 @@ export default function Landing() {
 
         {/* ---------------- Feature Grid ---------------- */}
         <section className="w-full max-w-7xl px-6" id="features">
-          <h2 className="mb-2 text-center text-3xl font-bold md:text-4xl">
+          <h2
+            className="mb-2 text-center text-3xl font-bold md:text-4xl"
+            data-reveal
+          >
             Core Feature Set
           </h2>
-          <p className="mb-12 text-center text-sm text-muted-foreground max-w-2xl mx-auto">
-            Build a cohesive sonic catalog with visual clarity, speed and
-            delight. 🎹
+          <p
+            className="mb-12 text-center text-sm text-muted-foreground max-w-2xl mx-auto"
+            data-reveal
+            style={revealDelay(1)}
+          >
+            Build a cohesive sonic catalog with visual clarity, speed, and a
+            workflow your team can repeat.
           </p>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {featureBlocks.map((f) => (
+            {featureBlocks.map((f, i) => (
               <div
                 key={f.title}
+                data-reveal
+                style={revealDelay(i)}
                 className="group relative flex flex-col gap-3 rounded-xl border bg-card/70 p-6 backdrop-blur transition hover:-translate-y-1 hover:shadow-md"
               >
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg border bg-background/70 text-primary shadow-sm group-hover:scale-[1.05] transition">
@@ -471,33 +686,89 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* ---------------- Use Cases ---------------- */}
+        <section className="w-full max-w-7xl px-6">
+          <div className="flex flex-col gap-4 text-center md:flex-row md:items-end md:justify-between md:text-left">
+            <div className="space-y-3">
+              <h2
+                className="text-3xl font-bold md:text-4xl"
+                data-reveal
+                style={revealDelay(0)}
+              >
+                How Teams Use MetaWave
+              </h2>
+              <p
+                className="max-w-2xl text-sm text-muted-foreground"
+                data-reveal
+                style={revealDelay(1)}
+              >
+                Built for modern audio teams who need structure, speed, and
+                consistent presentation across every release.
+              </p>
+            </div>
+            <div
+              className="inline-flex items-center justify-center rounded-full border bg-card/70 px-4 py-2 text-xs text-muted-foreground"
+              data-reveal
+              style={revealDelay(2)}
+            >
+              5 workflows • 15+ repeatable tasks
+            </div>
+          </div>
+          <div className="mt-8">
+            <div className="flex gap-6 overflow-x-auto overflow-y-visible px-2 pb-6 pt-4 sm:px-4 md:grid md:grid-cols-3 md:gap-8 md:overflow-visible md:px-0 md:pb-0 md:pt-0">
+              {useCases.map((u, i) => (
+                <div
+                  key={u.title}
+                  data-reveal
+                  style={revealDelay(i)}
+                  className="group relative min-w-[260px] snap-start rounded-2xl border bg-card/70 p-6 backdrop-blur transition hover:-translate-y-1 hover:shadow-md md:min-w-0"
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg border bg-background/70 text-primary shadow-sm transition group-hover:scale-105">
+                    {u.icon}
+                  </div>
+                  <h3 className="mt-4 text-lg font-semibold">{u.title}</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">{u.desc}</p>
+                  <ul className="mt-4 space-y-2 text-xs text-muted-foreground">
+                    {u.bullets.map((b) => (
+                      <li key={b} className="flex items-center gap-2">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                        <span>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-primary/10 transition group-hover:ring-primary/25" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ---------------- Workflow Section ---------------- */}
         <section className="w-full max-w-6xl px-6">
           <div className="grid gap-12 md:grid-cols-2 items-center">
             <div className="space-y-6">
-              <h2 className="text-3xl md:text-4xl font-bold leading-tight">
+              <h2
+                className="text-3xl md:text-4xl font-bold leading-tight"
+                data-reveal
+              >
                 A friction‑free workflow from{" "}
                 <span className="text-primary">upload</span> to
                 <br />
-                polished{" "}
-                <span className="bg-gradient-to-r from-primary/80 to-accent bg-clip-text text-transparent">
-                  showcase
-                </span>
-                .
+                polished <span className="text-primary">showcase</span>.
               </h2>
-              <ul className="space-y-4 text-sm">
+              <ul className="space-y-4 text-sm" data-reveal>
                 {[
                   {
                     icon: <FileAudio2 className="h-4 w-4 text-primary" />,
-                    text: "Drag in MP3s - metadata parsed where available.",
+                    text: "Drag in MP3s; metadata parsed where available.",
                   },
                   {
                     icon: <Images className="h-4 w-4 text-primary" />,
-                    text: "Embed or batch replace cover art in seconds.",
+                    text: "Embed or batch-replace cover art in seconds.",
                   },
                   {
                     icon: <ListMusic className="h-4 w-4 text-primary" />,
-                    text: "Create albums & reorder with fluid drag & drop.",
+                    text: "Create albums and reorder with fluid drag and drop.",
                   },
                   {
                     icon: <Zap className="h-4 w-4 text-primary" />,
@@ -508,13 +779,18 @@ export default function Landing() {
                     text: "Flip public visibility & share your curated hub.",
                   },
                 ].map((l, i) => (
-                  <li key={i} className="flex items-start gap-3">
+                  <li
+                    key={i}
+                    className="flex items-start gap-3"
+                    data-reveal
+                    style={revealDelay(i)}
+                  >
                     <span className="mt-[3px]">{l.icon}</span>
                     <span className="text-muted-foreground">{l.text}</span>
                   </li>
                 ))}
               </ul>
-              <div className="flex gap-4 pt-2">
+              <div className="flex gap-4 pt-2" data-reveal>
                 <Link href="/register">
                   <Button className="gap-2">
                     Start Creating
@@ -530,8 +806,8 @@ export default function Landing() {
               </div>
             </div>
             {/* Visual Demo Placeholder */}
-            <div className="relative">
-              <div className="aspect-[4/3] w-full rounded-2xl border bg-card/70 backdrop-blur p-6 shadow-sm overflow-hidden">
+            <div className="relative" data-reveal>
+              <div className="w-full min-h-[360px] rounded-2xl border bg-card/70 backdrop-blur p-6 shadow-sm overflow-hidden animate-float-slow md:min-h-0 md:aspect-[4/3]">
                 <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-primary/10 via-transparent to-accent/10" />
                 <div className="grid gap-4 sm:grid-cols-2 text-xs">
                   {[
@@ -563,20 +839,78 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* ---------------- Module Highlights ---------------- */}
+        <section className="w-full max-w-6xl px-6">
+          <div className="text-center">
+            <h2
+              className="text-3xl font-bold md:text-4xl"
+              data-reveal
+              style={revealDelay(0)}
+            >
+              Deep Control Without Complexity
+            </h2>
+            <p
+              className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground"
+              data-reveal
+              style={revealDelay(1)}
+            >
+              Modular tooling keeps teams aligned while letting power users move
+              fast. Every module is designed for high-volume libraries.
+            </p>
+          </div>
+          <div className="mt-10 grid gap-6 md:grid-cols-2">
+            {moduleHighlights.map((m, i) => (
+              <div
+                key={m.title}
+                data-reveal
+                style={revealDelay(i)}
+                className="group relative rounded-2xl border bg-card/70 p-6 backdrop-blur transition hover:-translate-y-1 hover:shadow-md"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg border bg-background/70 text-primary shadow-sm transition group-hover:scale-105">
+                  {m.icon}
+                </div>
+                <div className="mt-4">
+                  <h3 className="text-lg font-semibold">{m.title}</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">{m.desc}</p>
+                  <ul className="mt-4 space-y-2 text-xs text-muted-foreground">
+                    {m.bullets.map((b) => (
+                      <li key={b} className="flex items-center gap-2">
+                        <Check className="h-3.5 w-3.5 text-primary" />
+                        <span>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-primary/10 transition group-hover:ring-primary/25" />
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* ---------------- Tech Stack ---------------- */}
         <section className="w-full max-w-6xl px-6">
-          <h2 className="mb-2 text-center text-3xl font-bold">
+          <h2
+            className="mb-2 text-center text-3xl font-bold"
+            data-reveal
+            style={revealDelay(0)}
+          >
             Powered by Modern Tech
           </h2>
-          <p className="mb-6 text-center text-sm text-muted-foreground max-w-2xl mx-auto">
+          <p
+            className="mb-6 text-center text-sm text-muted-foreground max-w-2xl mx-auto"
+            data-reveal
+            style={revealDelay(1)}
+          >
             Built with a focus on performance, scalability and developer
-            experience. We leverage the latest web technologies to deliver a
-            seamless audio management experience. 🎵
+            experience. We leverage modern web technologies to deliver a
+            seamless audio management experience.
           </p>
           <div className="flex flex-wrap justify-center gap-8">
-            {techStack.map((t) => (
+            {techStack.map((t, i) => (
               <div
                 key={t.label}
+                data-reveal
+                style={revealDelay(i)}
                 className="group flex flex-col items-center gap-2 rounded-xl border bg-card/70 px-6 py-5 backdrop-blur transition hover:-translate-y-1 hover:shadow"
               >
                 <div className="text-primary">{t.icon}</div>
@@ -588,16 +922,77 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* ---------------- Security & Reliability ---------------- */}
+        <section className="w-full max-w-6xl px-6">
+          <div className="grid gap-10 md:grid-cols-[1.1fr_1fr] items-start">
+            <div className="space-y-4">
+              <h2
+                className="text-3xl font-bold md:text-4xl"
+                data-reveal
+                style={revealDelay(0)}
+              >
+                Reliable by Design
+              </h2>
+              <p
+                className="text-sm text-muted-foreground"
+                data-reveal
+                style={revealDelay(1)}
+              >
+                MetaWave is built to protect original assets and preserve every
+                change. Uploads are verified, metadata is versioned, and sharing
+                controls are always in your hands.
+              </p>
+              <ul className="space-y-3 text-sm" data-reveal>
+                {[
+                  "Immutable originals with versioned derivatives",
+                  "Role-based access controls for teams",
+                  "Audit-friendly exports with embedded artwork",
+                  "Secure storage powered by Supabase",
+                ].map((item, i) => (
+                  <li
+                    key={item}
+                    className="flex items-start gap-3"
+                    data-reveal
+                    style={revealDelay(i)}
+                  >
+                    <Check className="mt-[2px] h-4 w-4 text-primary" />
+                    <span className="text-muted-foreground">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {safeguards.map((s, i) => (
+                <div
+                  key={s.title}
+                  data-reveal
+                  style={revealDelay(i)}
+                  className="group relative rounded-2xl border bg-card/70 p-5 backdrop-blur transition hover:-translate-y-1 hover:shadow-md"
+                >
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg border bg-background/70 text-primary shadow-sm transition group-hover:scale-105">
+                    {s.icon}
+                  </div>
+                  <h3 className="mt-3 text-sm font-semibold">{s.title}</h3>
+                  <p className="mt-2 text-xs text-muted-foreground">{s.desc}</p>
+                  <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-primary/10 transition group-hover:ring-primary/25" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ---------------- Testimonials ---------------- */}
         <section className="w-full max-w-6xl px-6">
-          <h2 className="mb-10 text-center text-3xl font-bold">
-            Creators Are Already Feeling the Flow
+          <h2 className="mb-10 text-center text-3xl font-bold" data-reveal>
+            Creators Already Rely on MetaWave
           </h2>
-          <div className="grid gap-8 md:grid-cols-3">
-            {testimonials.map((t) => (
+          <div className="flex gap-6 overflow-x-auto overflow-y-visible px-2 pb-6 pt-4 sm:px-4 md:grid md:grid-cols-3 md:overflow-visible md:px-0 md:pb-0 md:pt-0">
+            {testimonials.map((t, i) => (
               <div
                 key={t.name}
-                className="relative rounded-xl border bg-card/70 p-6 backdrop-blur shadow-sm hover:shadow-md transition"
+                data-reveal
+                style={revealDelay(i)}
+                className="relative min-w-[260px] snap-start rounded-xl border bg-card/70 p-6 backdrop-blur shadow-sm transition hover:-translate-y-1 hover:shadow-md md:min-w-0"
               >
                 <Star className="h-5 w-5 text-yellow-400" />
                 <p className="my-4 text-sm italic leading-relaxed">
@@ -615,25 +1010,29 @@ export default function Landing() {
 
         {/* ---------------- Pricing ---------------- */}
         <section className="w-full max-w-7xl px-6" id="pricing">
-          <h2 className="mb-3 text-center text-3xl font-bold">
+          <h2 className="mb-3 text-center text-3xl font-bold" data-reveal>
             Pricing & Future Tiers
           </h2>
-          <p className="mb-12 text-center text-sm text-muted-foreground max-w-xl mx-auto">
+          <p
+            className="mb-12 text-center text-sm text-muted-foreground max-w-xl mx-auto"
+            data-reveal
+            style={revealDelay(1)}
+          >
             During our public beta, all tiers are free! We value your feedback
-            and will iterate based on your needs. Future tiers will unlock even
-            more advanced features and team collaboration tools. ✨
+            and will iterate based on your needs. Future tiers will unlock
+            advanced features and team collaboration tools.
           </p>
           <div className="grid gap-8 md:grid-cols-3">
-            {tiers.map((tier) => (
+            {tiers.map((tier, i) => (
               <div
                 key={tier.tier}
+                data-reveal
+                style={revealDelay(i)}
                 className="group relative flex flex-col rounded-2xl border bg-card/70 p-8 backdrop-blur shadow-sm transition hover:-translate-y-1 hover:shadow-md"
               >
                 <h3 className="text-xl font-bold">{tier.tier}</h3>
                 <p className="mt-2 text-3xl font-extrabold">
-                  <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                    {tier.price}
-                  </span>
+                  <span className="text-primary">{tier.price}</span>
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {tier.note}
@@ -659,40 +1058,32 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* ---------------- Roadmap ---------------- */}
-        <section className="w-full max-w-4xl px-6">
-          <h2 className="mb-6 text-center text-3xl font-bold">
-            Roadmap Highlights
-          </h2>
-          <div className="relative pl-6 border-l">
-            {roadmap.map((r, i) => (
-              <div key={i} className="mb-8 flex gap-4">
-                <span className="absolute -left-[7px] mt-1 h-3 w-3 rounded-full bg-primary" />
-                <CalendarCheck2 className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="font-semibold">{r.when}</p>
-                  <p className="text-sm text-muted-foreground">{r.what}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
         {/* ---------------- FAQ ---------------- */}
         <section className="w-full max-w-5xl px-6">
-          <h2 className="mb-4 text-center text-3xl font-bold">
+          <h2 className="mb-4 text-center text-3xl font-bold" data-reveal>
             Frequently Asked Questions
           </h2>
-          <p className="mb-8 text-center text-sm text-muted-foreground max-w-2xl mx-auto">
-            Have questions? We have answers! Here are some common queries from
-            our community. If you need more help, feel free to reach out via our
-            GitHub repository's Issues page or support email. 📧
+          <p
+            className="mb-8 text-center text-sm text-muted-foreground max-w-2xl mx-auto"
+            data-reveal
+            style={revealDelay(1)}
+          >
+            Common questions answered clearly. If you need more help, reach out
+            via our GitHub repository's Issues page or support email.
           </p>
-          <Accordion type="single" collapsible className="space-y-2">
+          <Accordion
+            type="single"
+            collapsible
+            className="space-y-2"
+            data-reveal
+            style={revealDelay(2)}
+          >
             {faqs.map((f, i) => (
               <AccordionItem
                 key={i}
                 value={`faq-${i}`}
+                data-reveal
+                style={revealDelay(i)}
                 className="overflow-hidden rounded-lg border bg-card/60 backdrop-blur"
               >
                 <AccordionTrigger className="px-4 py-3 text-left text-sm font-medium hover:text-primary">
@@ -708,7 +1099,10 @@ export default function Landing() {
 
         {/* ---------------- Newsletter / CTA ---------------- */}
         <section className="w-full max-w-6xl px-6">
-          <div className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/15 via-background to-accent/10 p-[2px]">
+          <div
+            className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/15 via-background to-accent/10 p-[2px]"
+            data-reveal
+          >
             <div className="relative flex flex-col gap-10 rounded-[inherit] bg-background/80 px-8 py-14 backdrop-blur">
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(var(--primary-rgb),0.25),transparent_60%)]" />
               <div className="max-w-xl space-y-4">
@@ -759,7 +1153,10 @@ export default function Landing() {
 
         {/* ---------------- Final CTA Banner ---------------- */}
         <section className="w-full max-w-6xl px-6">
-          <div className="relative overflow-hidden rounded-2xl border bg-card/70 p-10 backdrop-blur">
+          <div
+            className="relative overflow-hidden rounded-2xl border bg-card/70 p-10 backdrop-blur"
+            data-reveal
+          >
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/20" />
             <div className="flex flex-col items-center justify-between gap-8 md:flex-row">
               <div className="max-w-xl space-y-2 text-center md:text-left">
@@ -826,6 +1223,19 @@ export default function Landing() {
           animation: blob 30s ease-in-out infinite 8s;
         }
 
+        @keyframes floatSlow {
+          0%,
+          100% {
+            transform: translate3d(0, 0, 0);
+          }
+          50% {
+            transform: translate3d(0, -10px, 0);
+          }
+        }
+        .animate-float-slow {
+          animation: floatSlow 16s ease-in-out infinite;
+        }
+
         @keyframes waveBar {
           0%,
           100% {
@@ -869,6 +1279,37 @@ export default function Landing() {
             black 55%,
             transparent 85%
           );
+        }
+
+        [data-reveal] {
+          opacity: 0;
+          filter: blur(10px);
+          transition:
+            opacity 700ms ease,
+            filter 700ms ease;
+          transition-delay: var(--delay, 0ms);
+          will-change: opacity, filter;
+        }
+
+        [data-reveal].is-visible {
+          opacity: 1;
+          filter: blur(0);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .animate-blob,
+          .animate-blob2,
+          .animate-blob3,
+          .animate-float-slow,
+          .animate-wave-bar,
+          .animate-caret {
+            animation: none !important;
+          }
+          [data-reveal] {
+            opacity: 1;
+            filter: none;
+            transition: none;
+          }
         }
       `}</style>
     </>
