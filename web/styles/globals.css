@@ -15,11 +15,20 @@
 html {
   font-family: "Open Sans", sans-serif;
   scroll-behavior: smooth;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  width: 100%;
+  overflow-x: hidden;
+}
+
+#__next {
+  min-height: 100%;
+  overflow-x: hidden;
 }
 
 :root {
